@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: local
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: chang4293@gmail.com
+    password: ${GOOGLE_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+
+server:
+  port: 8080
+

@@ -1,0 +1,26 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+jwt:
+  secret: 9888719a73c5bb31f3fbb8945be4e27500bf5e37b0871bda82758b9d1ce73242bb4dde527bb4164c613df10964f69427f3cdf385edaa5582b48b14b72be9e0a2
+  accessTokenExpiration: 3600000  # 1 hour in milliseconds
+  refreshTokenExpiration: 604800000  # 7 days in milliseconds
+
+app:
+  baseUrl: http://localhost:8080
