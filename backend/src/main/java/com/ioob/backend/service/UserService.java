@@ -16,6 +16,6 @@ public interface UserService {
     void deleteUser(User user);
     UserProfileResponseDto getUserProfile(User user);
 
-    List<User> getAllUsers();  // 모든 사용자 조회 (관리자 전용)
+    List<UserProfileResponseDto> getAllUsers();  // 모든 사용자 조회 (관리자 전용)
     void deleteUserById(Long id);  // 사용자 삭제 (관리자 전용)
 }

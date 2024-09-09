@@ -2,6 +2,7 @@ package com.ioob.backend.service;
 
 import com.ioob.backend.dto.ProjectRequestDto;
 import com.ioob.backend.dto.ProjectResponseDto;
+import com.ioob.backend.dto.UserProjectRoleDto;
 
 import java.util.List;
 
@@ -12,4 +13,5 @@ public interface ProjectService {
     ProjectResponseDto updateProject(Long id, ProjectRequestDto projectRequestDto);
     void deleteProject(Long id);
     List<ProjectResponseDto> getUserProjects(String email);
+    List<UserProjectRoleDto> getUsersByProjectId(Long projectId);
 }

@@ -10,12 +10,15 @@ public enum ResponseMessage {
     EMAIL_VERIFIED_SUCCESS("S004", "Email verified successfully"),
     USER_DELETED_SUCCESS("S005", "User deleted successfully"),
     GET_PROFILE_SUCCESS("S006", "Get profile successfully"),
+    USER_FETCHED_SUCCESS("S007", "User fetched successfully"),
 
     // 추가된 프로젝트, 보드, 작업 성공 메시지
     PROJECT_CREATE_SUCCESS("P001", "Project created successfully"),
     PROJECT_UPDATE_SUCCESS("P002", "Project updated successfully"),
     PROJECT_DELETE_SUCCESS("P003", "Project deleted successfully"),
     PROJECT_FETCH_SUCCESS("P004", "Project fetched successfully"),
+    PROJECT_ROLE_ASSIGN_SUCCESS("P005", "Project roll assigned successfully"),
+    PROJECT_USERS_FETCH_SUCCESS("P006", "Project users fetched successfully"),
 
     BOARD_CREATE_SUCCESS("B001", "Board created successfully"),
     BOARD_UPDATE_SUCCESS("B002", "Board updated successfully"),

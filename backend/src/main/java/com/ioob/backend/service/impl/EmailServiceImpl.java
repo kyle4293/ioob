@@ -29,9 +29,17 @@ public class EmailServiceImpl implements EmailService {
     public void sendVerificationEmail(String to, String token) throws MessagingException {
         try {
             String subject = "Email Verification";
+            StringBuilder messageBuilder = new StringBuilder();
+
             String confirmationUrl = env.getProperty("app.baseUrl") + "/api/auth/verify?token=" + token;
-            String message = "<p>Please click the link below to verify your email:</p>"
-                    + "<a href=\"" + confirmationUrl + "\">Verify Email</a>";
+
+            // StringBuilder를 이용한 문자열 결합
+            messageBuilder.append("<p>Please click the link below to verify your email:</p>")
+                    .append("<a href=\"")
+                    .append(confirmationUrl)
+                    .append("\">Verify Email</a>");
+
+            String message = messageBuilder.toString();  // 최종 문자열로 변환
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
@@ -45,6 +53,7 @@ public class EmailServiceImpl implements EmailService {
             throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
         }
     }
+
 
     @Override
     public boolean verifyToken(String token) {

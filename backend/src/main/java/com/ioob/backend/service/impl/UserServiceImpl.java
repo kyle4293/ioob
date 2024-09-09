@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -137,16 +138,23 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserProfileResponseDto getUserProfile(User user) {
-        return new UserProfileResponseDto(user.getName(), user.getEmail(), user.getRole() ,user.isEnabled());
+        try {
+            return new UserProfileResponseDto(user.getName(), user.getEmail(), user.getRole(), user.isEnabled());
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
     }
 
-
     @Override
-    public List<User> getAllUsers() {
+    @Transactional(readOnly = true)
+    public List<UserProfileResponseDto> getAllUsers() {
         try {
-            return userRepository.findAll();
+            List<User> users = userRepository.findAll();
+            return users.stream()
+                    .map(UserProfileResponseDto::new)  // User 객체를 UserProfileResponseDto로 변환
+                    .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.FETCH_USERS_FAILED); // 사용자 목록 조회 실패
+            throw new CustomException(ErrorCode.FETCH_USERS_FAILED); // 사용자 목록 조회 실패 시 예외 처리
         }
     }
 

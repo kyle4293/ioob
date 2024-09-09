@@ -11,8 +11,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResponse<String>> handleCustomException(CustomException ex) {
-        ApiResponse<String> response = ApiResponse.failure(ex.getErrorCode().getCode(), ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(ApiResponse.failure(ex.getErrorCode().getCode(), ex.getMessage()));
     }
 
 }

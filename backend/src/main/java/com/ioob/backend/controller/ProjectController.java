@@ -2,7 +2,9 @@ package com.ioob.backend.controller;
 
 import com.ioob.backend.dto.ProjectRequestDto;
 import com.ioob.backend.dto.ProjectResponseDto;
+import com.ioob.backend.dto.UserProjectRoleDto;
 import com.ioob.backend.entity.RoleName;
+import com.ioob.backend.entity.UserProjectRole;
 import com.ioob.backend.response.ApiResponse;
 import com.ioob.backend.response.ResponseMessage;
 import com.ioob.backend.security.UserDetailsImpl;
@@ -71,17 +73,30 @@ public class ProjectController {
     @Operation(summary = "프로젝트 권한 부여", description = "프로젝트 관리자만 권한을 부여할 수 있습니다.",
     parameters = {
         @Parameter(name = "projectId", description = "권한을 부여할 프로젝트 ID", example = "1"),
-        @Parameter(name = "userId", description = "권한을 부여할 사용자 ID", example = "2"),
+        @Parameter(name = "userEmail", description = "권한을 부여할 사용자 Email", example = "wwkyle01@gmail.com"),
         @Parameter(name = "roleName", description = "부여할 권한 (ROLE_PROJECT_ADMIN 또는 ROLE_USER)", example = "ROLE_USER")
     })
     @PostMapping("/{projectId}/assign-role")
     public ResponseEntity<ApiResponse<String>> assignRoleToUser(
             @PathVariable Long projectId,
-            @RequestParam Long userId,
+            @RequestParam String userEmail,
             @RequestParam RoleName roleName) {
 
-        roleService.assignRoleToUser(projectId, userId, roleName);
+        roleService.assignRoleToUser(projectId, userEmail, roleName);
 
-        return ResponseEntity.ok(ApiResponse.success("200", "권한 부여 성공", null));
+        return ResponseEntity.ok(ApiResponse.success(
+                ResponseMessage.PROJECT_ROLE_ASSIGN_SUCCESS.getCode(),
+                ResponseMessage.PROJECT_ROLE_ASSIGN_SUCCESS.getMessage(),
+                null));
+    }
+
+    @Operation(summary = "프로젝트에 속한 사용자들 조회", description = "프로젝트에 속한 모든 사용자들을 조회하는 API")
+    @GetMapping("/{projectId}/users")
+    public ResponseEntity<ApiResponse<List<UserProjectRoleDto>>> getUsersByProjectId(@PathVariable Long projectId) {
+        List<UserProjectRoleDto> users = projectService.getUsersByProjectId(projectId);
+        return ResponseEntity.ok(ApiResponse.success(
+                ResponseMessage.PROJECT_USERS_FETCH_SUCCESS.getCode(),
+                ResponseMessage.PROJECT_USERS_FETCH_SUCCESS.getMessage(),
+                users));
     }
 }
