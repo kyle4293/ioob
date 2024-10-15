@@ -1,17 +1,17 @@
-package com.ioob.backend.service;
+package com.ioob.backend.domain.kanban.service;
 
-import com.ioob.backend.dto.ProjectRequestDto;
-import com.ioob.backend.dto.ProjectResponseDto;
-import com.ioob.backend.dto.UserProjectRoleDto;
-import com.ioob.backend.entity.Project;
-import com.ioob.backend.entity.RoleName;
-import com.ioob.backend.entity.User;
-import com.ioob.backend.entity.UserProjectRole;
-import com.ioob.backend.exception.CustomException;
-import com.ioob.backend.exception.ErrorCode;
-import com.ioob.backend.repository.ProjectRepository;
-import com.ioob.backend.repository.RoleRepository;
-import com.ioob.backend.repository.UserRepository;
+import com.ioob.backend.domain.kanban.dto.ProjectRequestDto;
+import com.ioob.backend.domain.kanban.dto.ProjectResponseDto;
+import com.ioob.backend.domain.kanban.dto.UserProjectRoleDto;
+import com.ioob.backend.domain.kanban.entity.Project;
+import com.ioob.backend.domain.kanban.entity.Role;
+import com.ioob.backend.domain.auth.entity.User;
+import com.ioob.backend.domain.kanban.entity.UserProjectRole;
+import com.ioob.backend.global.exception.CustomException;
+import com.ioob.backend.global.exception.ErrorCode;
+import com.ioob.backend.domain.kanban.repository.ProjectRepository;
+import com.ioob.backend.domain.kanban.repository.UserProjectRoleRepository;
+import com.ioob.backend.domain.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final UserProjectRoleRepository userProjectRoleRepository;
     private final RoleService roleService;
 
     
@@ -39,12 +39,12 @@ public class ProjectService {
 
     
     @Transactional(readOnly = true)
-    public ProjectResponseDto getProjectById(String email, Long id) {
+    public ProjectResponseDto getProjectById(User user, Long id) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         // 프로젝트 권한 확인
-        if (!roleService.isUserInProject(id, email)) {
+        if (!user.isAdmin() && !roleService.isUserInProject(id, user.getEmail())) {
             throw new CustomException(ErrorCode.AUTHORIZATION_REQUIRED);
         }
 
@@ -53,7 +53,7 @@ public class ProjectService {
 
     
     @Transactional
-    public ProjectResponseDto createProject(ProjectRequestDto projectRequestDto) {
+    public ProjectResponseDto createProject(User user, ProjectRequestDto projectRequestDto) {
         // 프로젝트 생성
         Project project = Project.builder()
                 .name(projectRequestDto.getName())
@@ -62,9 +62,12 @@ public class ProjectService {
         project = projectRepository.save(project);
 
         // 현재 로그인한 사용자에게 프로젝트 관리자 권한 부여
-        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        roleService.assignRoleToUser(project.getId(), user.getEmail(), RoleName.ROLE_PROJECT_ADMIN);
+        UserProjectRole userProjectRole = UserProjectRole.builder()
+                .user(user)
+                .project(project)
+                .role(Role.ROLE_PROJECT_ADMIN)
+                .build();
+        userProjectRoleRepository.save(userProjectRole);
 
         return new ProjectResponseDto(project);
     }
@@ -77,7 +80,7 @@ public class ProjectService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         // 관리자 권한 확인
-        if (!roleService.hasPermission(id, RoleName.ROLE_PROJECT_ADMIN, email)) {
+        if (!roleService.hasPermission(id, Role.ROLE_PROJECT_ADMIN, email)) {
             throw new CustomException(ErrorCode.AUTHORIZATION_REQUIRED);
         }
 
@@ -88,13 +91,12 @@ public class ProjectService {
 
     
     @Transactional
-    public void deleteProject(Long id) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    public void deleteProject(User user, Long id) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         // 관리자 권한 확인
-        if (!roleService.hasPermission(id, RoleName.ROLE_PROJECT_ADMIN, email)) {
+        if (!user.isAdmin() && !roleService.hasPermission(id, Role.ROLE_PROJECT_ADMIN, user.getEmail())) {
             throw new CustomException(ErrorCode.AUTHORIZATION_REQUIRED);
         }
 
@@ -103,7 +105,7 @@ public class ProjectService {
 
     @Transactional(readOnly = true)
     public List<ProjectResponseDto> getUserProjects(String email) {
-        List<UserProjectRole> userProjectRoles = roleRepository.findByUserEmail(email);
+        List<UserProjectRole> userProjectRoles = userProjectRoleRepository.findByUserEmail(email);
 
         return userProjectRoles.stream()
                 .map(userProjectRole -> new ProjectResponseDto(userProjectRole.getProject()))
@@ -112,20 +114,15 @@ public class ProjectService {
 
     @Transactional(readOnly = true)
     
-    public List<UserProjectRoleDto> getUsersByProjectId(Long projectId) {
-        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+    public List<UserProjectRoleDto> getUsersByProjectId(User user, Long projectId) {
 
         // 프로젝트 접근 권한 확인
-        if (!roleService.isUserInProject(projectId, currentUserEmail)) {
+        if (!user.isAdmin() && !roleService.isUserInProject(projectId, user.getEmail())) {
             throw new CustomException(ErrorCode.AUTHORIZATION_REQUIRED);  // 권한 없음
         }
 
-        return roleRepository.findByProjectId(projectId).stream()
-                .map(role -> new UserProjectRoleDto(
-                        role.getUser().getName(),
-                        role.getUser().getEmail(),
-                        role.getRole()
-                ))
+        return userProjectRoleRepository.findByProjectId(projectId).stream()
+                .map(UserProjectRoleDto::from)
                 .collect(Collectors.toList());
     }
 }

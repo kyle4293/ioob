@@ -1,9 +1,9 @@
-package com.ioob.backend.security;
+package com.ioob.backend.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ioob.backend.dto.UserLoginRequestDto;
-import com.ioob.backend.entity.RefreshToken;
-import com.ioob.backend.repository.RefreshTokenRepository;
+import com.ioob.backend.domain.auth.dto.UserLoginRequestDto;
+import com.ioob.backend.domain.auth.entity.RefreshToken;
+import com.ioob.backend.domain.auth.repository.RefreshTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +21,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
         this.jwtUtil = jwtUtil;

@@ -1,7 +1,7 @@
-package com.ioob.backend.dto;
+package com.ioob.backend.domain.kanban.dto;
 
-import com.ioob.backend.entity.Status;
-import com.ioob.backend.entity.Task;
+import com.ioob.backend.domain.kanban.entity.Status;
+import com.ioob.backend.domain.kanban.entity.Task;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,7 @@ public class TaskResponseDto {
     private String description;
     private Status status;
     private Long boardId;
+    private String userName;
 
     public TaskResponseDto(Task task) {
         this.id = task.getId();
@@ -24,5 +25,6 @@ public class TaskResponseDto {
         this.description = task.getDescription();
         this.status = task.getStatus();
         this.boardId = task.getBoard().getId();
+        this.userName = task.getUser().getName();
     }
 }

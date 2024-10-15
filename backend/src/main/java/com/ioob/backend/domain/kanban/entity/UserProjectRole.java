@@ -1,5 +1,6 @@
-package com.ioob.backend.entity;
+package com.ioob.backend.domain.kanban.entity;
 
+import com.ioob.backend.domain.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,10 +25,10 @@ public class UserProjectRole {
     private Project project;
 
     @Enumerated(EnumType.STRING)
-    private RoleName role;  // RoleName Enum으로 역할을 저장
+    private Role role;  // Role Enum으로 역할을 저장
 
     @Builder
-    public UserProjectRole(User user, Project project, RoleName role) {
+    public UserProjectRole(User user, Project project, Role role) {
         this.user = user;
         this.project = project;
         this.role = role;

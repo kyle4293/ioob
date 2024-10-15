@@ -1,4 +1,4 @@
-package com.ioob.backend.entity;
+package com.ioob.backend.domain.kanban.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,6 +25,9 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserProjectRole> userProjectRoles;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Board> boards;
 
     @Builder
     public Project(String name, String description) {

@@ -1,4 +1,4 @@
-package com.ioob.backend.config;
+package com.ioob.backend.global.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

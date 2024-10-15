@@ -1,5 +1,6 @@
-package com.ioob.backend.entity;
+package com.ioob.backend.domain.kanban.entity;
 
+import com.ioob.backend.domain.auth.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,10 +11,10 @@ import jakarta.persistence.*;
 
 @Entity
 @Getter
-@Setter  // Setter를 사용해도 괜찮은 엔티티이므로 허용
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder  // Builder 패턴을 사용하기 위한 어노테이션 추가
+@Builder
 @Table(name = "tasks")
 public class Task {
 

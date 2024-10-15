@@ -1,6 +1,6 @@
-package com.ioob.backend.dto;
+package com.ioob.backend.domain.kanban.dto;
 
-import com.ioob.backend.entity.Project;
+import com.ioob.backend.domain.kanban.entity.Project;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

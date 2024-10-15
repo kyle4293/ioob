@@ -1,14 +1,14 @@
-package com.ioob.backend.service;
+package com.ioob.backend.domain.kanban.service;
 
-import com.ioob.backend.entity.Project;
-import com.ioob.backend.entity.RoleName;
-import com.ioob.backend.entity.User;
-import com.ioob.backend.entity.UserProjectRole;
-import com.ioob.backend.exception.CustomException;
-import com.ioob.backend.exception.ErrorCode;
-import com.ioob.backend.repository.ProjectRepository;
-import com.ioob.backend.repository.RoleRepository;
-import com.ioob.backend.repository.UserRepository;
+import com.ioob.backend.domain.kanban.entity.Project;
+import com.ioob.backend.domain.kanban.entity.Role;
+import com.ioob.backend.domain.auth.entity.User;
+import com.ioob.backend.domain.kanban.entity.UserProjectRole;
+import com.ioob.backend.global.exception.CustomException;
+import com.ioob.backend.global.exception.ErrorCode;
+import com.ioob.backend.domain.kanban.repository.ProjectRepository;
+import com.ioob.backend.domain.kanban.repository.UserProjectRoleRepository;
+import com.ioob.backend.domain.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,17 +20,17 @@ import java.util.List;
 @Service
 public class RoleService {
 
-    private final RoleRepository roleRepository;
+    private final UserProjectRoleRepository userProjectRoleRepository;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
 
     
     @Transactional
-    public void assignRoleToUser(Long projectId, String userEmail, RoleName roleName) {
+    public void assignRoleToUser(Long projectId, String userEmail, Role role) {
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         // 관리자 권한 확인
-        if (!hasPermission(projectId, RoleName.ROLE_PROJECT_ADMIN, currentUserEmail)) {
+        if (!hasPermission(projectId, Role.ROLE_PROJECT_ADMIN, currentUserEmail)) {
             throw new CustomException(ErrorCode.AUTHORIZATION_REQUIRED);
         }
 
@@ -44,23 +44,21 @@ public class RoleService {
         UserProjectRole userProjectRole = UserProjectRole.builder()
                 .user(user)
                 .project(project)
-                .role(roleName)
+                .role(role)
                 .build();
 
-        roleRepository.save(userProjectRole);
+        userProjectRoleRepository.save(userProjectRole);
     }
 
     @Transactional(readOnly = true)
-    
-    public boolean hasPermission(Long projectId, RoleName requiredRole, String email) {
-        List<UserProjectRole> roles = roleRepository.findByUserEmailAndProjectId(email, projectId);
+    public boolean hasPermission(Long projectId, Role requiredRole, String email) {
+        List<UserProjectRole> roles = userProjectRoleRepository.findByUserEmailAndProjectId(email, projectId);
         return roles.stream()
-                .anyMatch(role -> role.getRole() == requiredRole || role.getRole() == RoleName.ROLE_ADMIN);
+                .anyMatch(role -> role.getRole() == requiredRole || role.getRole() == Role.ROLE_ADMIN);
     }
 
     @Transactional(readOnly = true)
-    
     public boolean isUserInProject(Long projectId, String email) {
-        return !roleRepository.findByUserEmailAndProjectId(email, projectId).isEmpty();
+        return !userProjectRoleRepository.findByUserEmailAndProjectId(email, projectId).isEmpty();
     }
 }

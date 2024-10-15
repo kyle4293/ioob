@@ -1,6 +1,6 @@
-package com.ioob.backend.repository;
+package com.ioob.backend.domain.kanban.repository;
 
-import com.ioob.backend.entity.Board;
+import com.ioob.backend.domain.kanban.entity.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,12 +1,12 @@
-package com.ioob.backend.controller;
+package com.ioob.backend.domain.auth.controller;
 
-import com.ioob.backend.dto.ProjectResponseDto;
-import com.ioob.backend.dto.TaskResponseDto;
-import com.ioob.backend.dto.UserProfileResponseDto;
-import com.ioob.backend.security.UserDetailsImpl;
-import com.ioob.backend.service.ProjectService;
-import com.ioob.backend.service.TaskService;
-import com.ioob.backend.service.UserService;
+import com.ioob.backend.domain.auth.dto.UserProfileResponseDto;
+import com.ioob.backend.domain.auth.service.UserService;
+import com.ioob.backend.domain.kanban.dto.ProjectResponseDto;
+import com.ioob.backend.domain.kanban.dto.TaskResponseDto;
+import com.ioob.backend.global.security.UserDetailsImpl;
+import com.ioob.backend.domain.kanban.service.ProjectService;
+import com.ioob.backend.domain.kanban.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

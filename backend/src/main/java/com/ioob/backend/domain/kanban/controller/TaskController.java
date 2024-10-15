@@ -1,13 +1,13 @@
-package com.ioob.backend.controller;
+package com.ioob.backend.domain.kanban.controller;
 
-import com.ioob.backend.dto.TaskRequestDto;
-import com.ioob.backend.dto.TaskResponseDto;
-import com.ioob.backend.response.ApiResponse;
-import com.ioob.backend.service.TaskService;
+import com.ioob.backend.domain.kanban.dto.TaskRequestDto;
+import com.ioob.backend.domain.kanban.dto.TaskResponseDto;
+import com.ioob.backend.domain.kanban.service.TaskService;
+import com.ioob.backend.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +28,8 @@ public class TaskController {
 
     @Operation(summary = "작업 생성", description = "새로운 작업을 생성하는 API(TODO, IN_PROGRESS, DONE)")
     @PostMapping
-    public TaskResponseDto createTask(@RequestBody TaskRequestDto taskRequestDto) {
-        return taskService.createTask(taskRequestDto);
+    public TaskResponseDto createTask(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TaskRequestDto taskRequestDto) {
+        return taskService.createTask(userDetails.getUser(), taskRequestDto);
     }
 
     @Operation(summary = "작업 수정", description = "ID를 통해 특정 작업을 수정하는 API(TODO, IN_PROGRESS, DONE)")

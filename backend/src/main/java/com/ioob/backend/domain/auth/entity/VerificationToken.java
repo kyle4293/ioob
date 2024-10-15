@@ -1,4 +1,4 @@
-package com.ioob.backend.entity;
+package com.ioob.backend.domain.auth.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

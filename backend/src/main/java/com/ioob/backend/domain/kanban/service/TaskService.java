@@ -1,12 +1,16 @@
-package com.ioob.backend.service;
+package com.ioob.backend.domain.kanban.service;
 
-import com.ioob.backend.dto.TaskRequestDto;
-import com.ioob.backend.dto.TaskResponseDto;
-import com.ioob.backend.entity.*;
-import com.ioob.backend.exception.CustomException;
-import com.ioob.backend.exception.ErrorCode;
-import com.ioob.backend.repository.BoardRepository;
-import com.ioob.backend.repository.TaskRepository;
+import com.ioob.backend.domain.auth.entity.User;
+import com.ioob.backend.domain.kanban.dto.TaskRequestDto;
+import com.ioob.backend.domain.kanban.dto.TaskResponseDto;
+import com.ioob.backend.domain.kanban.entity.Board;
+import com.ioob.backend.domain.kanban.entity.Role;
+import com.ioob.backend.domain.kanban.entity.Status;
+import com.ioob.backend.domain.kanban.entity.Task;
+import com.ioob.backend.global.exception.CustomException;
+import com.ioob.backend.global.exception.ErrorCode;
+import com.ioob.backend.domain.kanban.repository.BoardRepository;
+import com.ioob.backend.domain.kanban.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -61,7 +65,7 @@ public class TaskService {
 
     
     @Transactional
-    public TaskResponseDto createTask(TaskRequestDto taskRequestDto) {
+    public TaskResponseDto createTask(User user, TaskRequestDto taskRequestDto) {
         Board board = boardRepository.findById(taskRequestDto.getBoardId())
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
@@ -78,6 +82,7 @@ public class TaskService {
                 .description(taskRequestDto.getDescription())
                 .status(Status.valueOf(taskRequestDto.getStatus()))
                 .board(board)
+                .user(user)
                 .build();
         task = taskRepository.save(task);
         return new TaskResponseDto(task);
@@ -92,7 +97,7 @@ public class TaskService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Long projectId = task.getBoard().getProject().getId();
 
-        if (!roleService.hasPermission(projectId, RoleName.ROLE_PROJECT_ADMIN, email)) {
+        if (!roleService.hasPermission(projectId, Role.ROLE_PROJECT_ADMIN, email)) {
             throw new CustomException(ErrorCode.AUTHORIZATION_REQUIRED);
         }
 
@@ -113,7 +118,7 @@ public class TaskService {
         Long projectId = task.getBoard().getProject().getId();
 
         // 관리자 권한 확인
-        if (!roleService.hasPermission(projectId, RoleName.ROLE_PROJECT_ADMIN, email)) {
+        if (!roleService.hasPermission(projectId, Role.ROLE_PROJECT_ADMIN, email)) {
             throw new CustomException(ErrorCode.AUTHORIZATION_REQUIRED);
         }
 

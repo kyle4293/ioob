@@ -1,4 +1,4 @@
-package com.ioob.backend.dto;
+package com.ioob.backend.domain.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

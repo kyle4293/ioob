@@ -1,7 +1,7 @@
-package com.ioob.backend.config;
+package com.ioob.backend.global.config;
 
-import com.ioob.backend.repository.RefreshTokenRepository;
-import com.ioob.backend.security.*;
+import com.ioob.backend.global.security.*;
+import com.ioob.backend.domain.auth.repository.RefreshTokenRepository;
 //import com.ioob.backend.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/swagger-ui/**","/v3/api-docs/**","/api/auth/register", "/api/auth/logout", "/api/auth/verify").permitAll() // 인증 없이 접근 가능한 엔드포인트 설정
+                                .requestMatchers("/swagger-ui/**","/v3/api-docs/**","/api/auth/register","/api/auth/refresh", "/api/auth/logout", "/api/auth/verify").permitAll() // 인증 없이 접근 가능한 엔드포인트 설정
                                 .requestMatchers("/api/backoffice/**").hasRole("ADMIN")
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )

@@ -13,14 +13,13 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/mydb
-    username: cgchoi
-    password: 4293
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
 jwt:
-  secret: 9888719a73c5bb31f3fbb8945be4e27500bf5e37b0871bda82758b9d1ce73242bb4dde527bb4164c613df10964f69427f3cdf385edaa5582b48b14b72be9e0a2
-  accessTokenExpiration: 3600000  # 1 hour in milliseconds
-  refreshTokenExpiration: 604800000  # 7 days in milliseconds
+  secret:
+    key: ${JWT_SECRET_KEY}
 
 app:
   baseUrl: http://localhost:8080

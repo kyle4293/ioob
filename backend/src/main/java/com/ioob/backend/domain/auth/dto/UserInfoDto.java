@@ -1,18 +1,19 @@
 package com.ioob.backend.domain.auth.dto;
 
 import com.ioob.backend.domain.auth.entity.User;
+import com.ioob.backend.domain.auth.entity.VerificationToken;
 import com.ioob.backend.domain.kanban.entity.Role;
 import lombok.Getter;
 
 @Getter
-public class UserProfileResponseDto {
+public class UserInfoDto {
     private Long id;
     private String name;
     private String email;
     private Role role;
     private boolean enabled;
 
-    private UserProfileResponseDto(User user) {
+    private UserInfoDto(User user) {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
@@ -20,7 +21,7 @@ public class UserProfileResponseDto {
         this.enabled = user.isEnabled();
     }
 
-    public static UserProfileResponseDto from(User user) {
-        return new UserProfileResponseDto(user);
+    public static UserInfoDto from(User user) {
+        return new UserInfoDto(user);
     }
 }

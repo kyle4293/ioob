@@ -1,7 +1,7 @@
-package com.ioob.backend.security;
+package com.ioob.backend.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ioob.backend.response.ApiResponse;
+import com.ioob.backend.global.response.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,8 +10,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {

@@ -1,6 +1,5 @@
-package com.ioob.backend.dto;
+package com.ioob.backend.domain.kanban.dto;
 
-import com.ioob.backend.entity.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

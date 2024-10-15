@@ -1,4 +1,4 @@
-package com.ioob.backend.exception;
+package com.ioob.backend.global.exception;
 
 import lombok.Getter;
 

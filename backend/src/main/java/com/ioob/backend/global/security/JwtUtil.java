@@ -1,4 +1,4 @@
-package com.ioob.backend.security;
+package com.ioob.backend.global.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

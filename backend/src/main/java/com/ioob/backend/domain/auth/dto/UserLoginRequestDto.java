@@ -1,4 +1,4 @@
-package com.ioob.backend.dto;
+package com.ioob.backend.domain.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

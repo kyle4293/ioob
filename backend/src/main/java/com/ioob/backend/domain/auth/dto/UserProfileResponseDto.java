@@ -1,24 +1,24 @@
-package com.ioob.backend.dto;
+package com.ioob.backend.domain.auth.dto;
 
-import com.ioob.backend.entity.Role;
-import com.ioob.backend.entity.RoleName;
-import com.ioob.backend.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.ioob.backend.domain.auth.entity.User;
+import com.ioob.backend.domain.kanban.entity.Role;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class UserProfileResponseDto {
     private String name;
     private String email;
-    private RoleName role;
+    private Role role;
     private boolean enabled;
 
-    public UserProfileResponseDto(User user) {
+    private UserProfileResponseDto(User user) {
         this.name = user.getName();
         this.email = user.getEmail();
         this.role = user.getRole();
         this.enabled = user.isEnabled();
+    }
+
+    public static UserProfileResponseDto from(User user) {
+        return new UserProfileResponseDto(user);
     }
 }

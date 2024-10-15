@@ -1,14 +1,14 @@
-package com.ioob.backend.service;
+package com.ioob.backend.domain.kanban.service;
 
-import com.ioob.backend.dto.BoardRequestDto;
-import com.ioob.backend.dto.BoardResponseDto;
-import com.ioob.backend.entity.Board;
-import com.ioob.backend.entity.Project;
-import com.ioob.backend.entity.RoleName;
-import com.ioob.backend.exception.CustomException;
-import com.ioob.backend.exception.ErrorCode;
-import com.ioob.backend.repository.BoardRepository;
-import com.ioob.backend.repository.ProjectRepository;
+import com.ioob.backend.domain.kanban.dto.BoardRequestDto;
+import com.ioob.backend.domain.kanban.dto.BoardResponseDto;
+import com.ioob.backend.domain.kanban.entity.Board;
+import com.ioob.backend.domain.kanban.entity.Project;
+import com.ioob.backend.domain.kanban.entity.Role;
+import com.ioob.backend.global.exception.CustomException;
+import com.ioob.backend.global.exception.ErrorCode;
+import com.ioob.backend.domain.kanban.repository.BoardRepository;
+import com.ioob.backend.domain.kanban.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -86,7 +86,7 @@ public class BoardService {
         Long projectId = board.getProject().getId();
 
         // 권한 확인 (프로젝트 관리자 확인)
-        if (!roleService.hasPermission(projectId, RoleName.ROLE_PROJECT_ADMIN, email)) {
+        if (!roleService.hasPermission(projectId, Role.ROLE_PROJECT_ADMIN, email)) {
             throw new CustomException(ErrorCode.AUTHORIZATION_REQUIRED);
         }
 
@@ -105,7 +105,7 @@ public class BoardService {
         Long projectId = board.getProject().getId();
 
         // 관리자 권한 확인
-        if (!roleService.hasPermission(projectId, RoleName.ROLE_PROJECT_ADMIN, email)) {
+        if (!roleService.hasPermission(projectId, Role.ROLE_PROJECT_ADMIN, email)) {
             throw new CustomException(ErrorCode.AUTHORIZATION_REQUIRED);
         }
         boardRepository.delete(board);

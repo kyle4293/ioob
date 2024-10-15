@@ -1,4 +1,4 @@
-package com.ioob.backend.entity;
+package com.ioob.backend.global.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

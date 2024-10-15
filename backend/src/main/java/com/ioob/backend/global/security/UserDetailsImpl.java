@@ -1,7 +1,6 @@
-package com.ioob.backend.security;
+package com.ioob.backend.global.security;
 
-import com.ioob.backend.entity.User;
-import com.ioob.backend.entity.UserProjectRole;
+import com.ioob.backend.domain.auth.entity.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,8 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter
 public class UserDetailsImpl implements UserDetails {

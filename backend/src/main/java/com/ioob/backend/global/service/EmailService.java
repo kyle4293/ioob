@@ -1,9 +1,7 @@
-package com.ioob.backend.service;
+package com.ioob.backend.global.service;
 
-import com.ioob.backend.entity.VerificationToken;
-import com.ioob.backend.exception.CustomException;
-import com.ioob.backend.exception.ErrorCode;
-import com.ioob.backend.repository.VerificationTokenRepository;
+import com.ioob.backend.global.exception.CustomException;
+import com.ioob.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,17 +11,12 @@ import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-import java.util.Calendar;
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @Service
 public class EmailService {
 
     private final JavaMailSender mailSender;
     private final Environment env;
-    private final VerificationTokenRepository tokenRepository;
-
     
     public void sendVerificationEmail(String to, String token) throws MessagingException {
         try {
@@ -51,28 +44,5 @@ public class EmailService {
         } catch (MessagingException e) {
             throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
         }
-    }
-
-
-    
-    public boolean verifyToken(String token) {
-        Optional<VerificationToken> optionalToken = tokenRepository.findByToken(token);
-
-        if (optionalToken.isEmpty()) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);  // 토큰이 존재하지 않으면 CustomException 발생
-        }
-
-        VerificationToken verificationToken = optionalToken.get();
-
-        Calendar cal = Calendar.getInstance();
-        if (verificationToken.getExpiryDate().before(cal.getTime())) {
-            throw new CustomException(ErrorCode.TOKEN_EXPIRED);  // 토큰이 만료되었을 때 CustomException 발생
-        }
-
-        // 토큰이 유효하면 사용자 계정을 활성화
-        verificationToken.getUser().verified();
-        tokenRepository.delete(verificationToken); // 인증된 토큰 삭제 (선택적)
-
-        return true;
     }
 }
