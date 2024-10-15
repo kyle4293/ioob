@@ -45,7 +45,7 @@ public class ProjectService {
 
         // 프로젝트 권한 확인
         if (!user.isAdmin() && !roleService.isUserInProject(id, user.getEmail())) {
-            throw new CustomException(ErrorCode.AUTHORIZATION_REQUIRED);
+            throw new CustomException(ErrorCode.PERMISSION_DENIED);
         }
 
         return new ProjectResponseDto(project);

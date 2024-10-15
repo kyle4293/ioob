@@ -26,6 +26,12 @@ public class TaskController {
         return taskService.getAllTasks(boardId);
     }
 
+    @Operation(summary = "작업 상세 조회", description = "작업 상세 화면을 조회하는 API")
+    @GetMapping("/{id}")
+    public TaskResponseDto getTaskById(@PathVariable Long id) {
+        return taskService.getTaskById(id);
+    }
+
     @Operation(summary = "작업 생성", description = "새로운 작업을 생성하는 API(TODO, IN_PROGRESS, DONE)")
     @PostMapping
     public TaskResponseDto createTask(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TaskRequestDto taskRequestDto) {

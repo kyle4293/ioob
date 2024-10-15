@@ -1,5 +1,6 @@
 package com.ioob.backend.domain.kanban.controller;
 
+import com.ioob.backend.domain.kanban.dto.AssignRoleDto;
 import com.ioob.backend.domain.kanban.dto.ProjectRequestDto;
 import com.ioob.backend.domain.kanban.dto.ProjectResponseDto;
 import com.ioob.backend.domain.kanban.dto.UserProjectRoleDto;
@@ -59,10 +60,9 @@ public class ProjectController {
     @PostMapping("/{projectId}/assign-role")
     public void assignRoleToUser(
             @PathVariable Long projectId,
-            @RequestParam String userEmail,
-            @RequestParam Role role) {
+            @RequestBody AssignRoleDto dto) {
 
-        roleService.assignRoleToUser(projectId, userEmail, role);
+        roleService.assignRoleToUser(projectId, dto.getUserEmail(), dto.getRole());
     }
 
     @Operation(summary = "프로젝트에 속한 사용자들 조회", description = "프로젝트에 속한 모든 사용자들을 조회하는 API")

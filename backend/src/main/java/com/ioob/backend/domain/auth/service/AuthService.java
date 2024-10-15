@@ -17,10 +17,12 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AuthService {
@@ -55,6 +57,7 @@ public class AuthService {
     public void reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = jwtUtil.getRefreshTokenFromRequest(request);
         try {
+            log.info("refreshToken="+refreshToken);
             jwtUtil.validateToken(refreshToken);
         } catch (ExpiredJwtException e) {
             // refresh token 만료시 쿠키에서 삭제

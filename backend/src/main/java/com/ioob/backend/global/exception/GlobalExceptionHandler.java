@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-//
-//    @ExceptionHandler(CustomException.class)
-//    public ResponseEntity<ApiResponse<String>> handleCustomException(CustomException ex) {
-//        return ResponseEntity.badRequest().body(ApiResponse.failure(ex.getErrorCode().getStatus().name(), ex.getMessage()));
-//    }
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ApiResponse<String>> handleCustomException(CustomException ex) {
+        return ResponseEntity
+                .status(ex.getErrorCode().getStatus()) // ErrorCode의 상태 코드 사용
+                .body(ApiResponse.failure(ex.getErrorCode().getStatus().name(), ex.getMessage()));
+    }
 
 }
