@@ -2,15 +2,14 @@ package com.ioob.backend.domain.kanban.entity;
 
 import com.ioob.backend.domain.auth.entity.User;
 import com.ioob.backend.global.entity.Timestamped;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
-
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,29 +17,20 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "tasks")
-public class Task extends Timestamped {
+@Table(name = "comments")
+public class Comment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-
-    private String description;
-
-    @Enumerated(EnumType.STRING)
-    private Status status; // Enum: To Do, In Progress, Done
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "task_id")
+    private Task task;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
-
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
-
+    private User user; // 댓글 작성자
 }

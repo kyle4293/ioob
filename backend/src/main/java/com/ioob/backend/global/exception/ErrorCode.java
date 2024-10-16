@@ -23,7 +23,8 @@ public enum ErrorCode {
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "Project not found"),
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "Task not found"),
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "Board not found"),
-    TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "Token not found");
+    TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "Token not found"),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Comment not found");
 
     private final HttpStatus status;
     private final String message;

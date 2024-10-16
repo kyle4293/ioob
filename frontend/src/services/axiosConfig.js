@@ -3,7 +3,7 @@ import { authService } from './authService'; // authService 사용하여 로그�
 
 // Axios 인스턴스 생성
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/',
+  baseURL: 'http://localhost:8080/',  // 올바른 baseURL 설정 (8080)
   headers: {
     'Content-Type': 'application/json',
   },
@@ -29,8 +29,8 @@ apiClient.interceptors.response.use(
           return Promise.reject(error);
         }
 
-        // Access Token 재발급
-        await axios.post('/api/auth/refresh', {}, { withCredentials: true });
+        // Access Token 재발급 (baseURL이 포함된 경로로 수정)
+        await axios.post('http://localhost:8080/api/auth/refresh', {}, { withCredentials: true });
 
         // 재발급 받은 후 원래의 요청 다시 시도
         return apiClient(originalRequest);

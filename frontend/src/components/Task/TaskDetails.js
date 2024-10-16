@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { taskService } from '../../services/TaskService';
+import CommentSection from './CommentSection'; // 댓글 섹션 컴포넌트
 
 const TaskDetails = () => {
   const { taskId } = useParams(); // URL에서 테스크 ID 가져옴
@@ -33,6 +34,9 @@ const TaskDetails = () => {
 
       <button onClick={() => console.log('테스크 편집 클릭')}>테스크 편집</button>
       <button onClick={() => console.log('테스크 삭제 클릭')}>테스크 삭제</button>
+
+      {/* 댓글 섹션 추가 */}
+      <CommentSection taskId={taskId} />
     </div>
   );
 };

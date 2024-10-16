@@ -26,6 +26,11 @@ public class ProjectController {
     private final ProjectService projectService;
     private final RoleService roleService;
 
+    @Operation(summary = "사용자의 프로젝트 목록 조회", description = "로그인한 사용자가 속한 모든 프로젝트 목록을 조회하는 API")
+    @GetMapping("/my-projects")
+    public List<ProjectResponseDto> getUserProjects(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return projectService.getUserProjects(userDetails.getUserId());
+    }
 
     @Operation(summary = "프로젝트 목록 조회", description = "모든 프로젝트를 조회하는 API")
     @GetMapping

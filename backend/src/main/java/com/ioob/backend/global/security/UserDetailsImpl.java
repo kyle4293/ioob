@@ -17,6 +17,10 @@ public class UserDetailsImpl implements UserDetails {
         this.user = user;
     }
 
+    public Long getUserId() {
+        return user.getId();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));  // 사용자 역할 반환

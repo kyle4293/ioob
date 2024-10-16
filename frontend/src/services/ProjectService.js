@@ -32,4 +32,9 @@ export const projectService = {
     const response = await apiClient.get(`/api/projects/${projectId}/users`);
     return response.data;
   },
+
+  getMyProjects: async () => {
+    const response = await apiClient.get('/api/projects/my-projects');
+    return response.data;
+  },
 };
