@@ -1,12 +1,14 @@
 package com.ioob.backend.domain.auth.entity;
 
 import com.ioob.backend.domain.kanban.entity.Role;
+import com.ioob.backend.domain.kanban.entity.Task;
 import com.ioob.backend.domain.kanban.entity.UserProjectRole;
 import com.ioob.backend.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,6 +26,9 @@ public class User extends Timestamped {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<UserProjectRole> userProjectRoles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Task> tasks;
 
     private boolean enabled = false; // 이메일 인증 여부
 

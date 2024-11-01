@@ -8,6 +8,7 @@ import ProjectList from './components/Project/ProjectList';
 import ProjectDetails from './components/Project/ProjectDetails';
 import CreateProject from './components/Project/CreateProject';
 import AdminPage from './components/Admin/AdminPage';
+import UserDetails from './components/Admin/UserDetails';
 import UserProfile from './components/User/UserProfile';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
@@ -30,6 +31,7 @@ const App = () => {
               <Route path="/projects/:id" element={<ProjectDetails />} />
               <Route path="/tasks/:taskId" element={<TaskDetails />} />
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/admin/users/:id" element={<UserDetails />} />
               <Route path="/profile" element={<UserProfile />} />
             </Routes>
           </main>

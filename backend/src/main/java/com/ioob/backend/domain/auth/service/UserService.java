@@ -6,6 +6,7 @@ import com.ioob.backend.domain.auth.entity.User;
 import com.ioob.backend.domain.auth.entity.VerificationToken;
 import com.ioob.backend.domain.auth.repository.UserRepository;
 import com.ioob.backend.domain.auth.repository.VerificationTokenRepository;
+import com.ioob.backend.domain.kanban.repository.TaskRepository;
 import com.ioob.backend.global.exception.CustomException;
 import com.ioob.backend.global.exception.ErrorCode;
 import com.ioob.backend.global.security.JwtUtil;
@@ -27,6 +28,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final VerificationTokenRepository tokenRepository;
+    private final TaskRepository taskRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -78,17 +80,19 @@ public class UserService {
         }
     }
 
+    public UserInfoDto getUser(Long id) {
+        return UserInfoDto.from(userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
+    }
+
     @Transactional
     public void deleteUserById(Long id) {
         try {
-            if (!userRepository.existsById(id)) {
-                throw new CustomException(ErrorCode.USER_NOT_FOUND);  // 사용자 존재 여부 확인
-            }
+
             userRepository.deleteById(id);
         } catch (CustomException e) {
-            throw e; // 이미 처리된 예외
+            throw e;
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.DELETE_USER_FAILED); // 사용자 삭제 실패
+            throw new CustomException(ErrorCode.DELETE_USER_FAILED);
         }
     }
 }

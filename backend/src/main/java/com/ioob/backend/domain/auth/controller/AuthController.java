@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Tag(name = "Authentication", description = "회원 인증 관련 API")
 @RestController
@@ -32,9 +33,9 @@ public class AuthController {
 
     @Operation(summary = "이메일 인증", description = "이메일로 전송된 토큰을 이용해 이메일 인증을 완료하는 API")
     @GetMapping("/verify")
-    public ResponseEntity<String> verifyUser(@RequestParam("token") String token) {
+    public RedirectView verifyUser(@RequestParam("token") String token) {
         userService.verifyEmail(token);
-        return ResponseEntity.ok("Email verified successfully");
+        return new RedirectView("http://localhost:3000");
     }
 
     @Operation(summary = "AccessToken 재발급", description = "Access token 만료시, Refresh token을 이용해 재발급을 요청하는 API")

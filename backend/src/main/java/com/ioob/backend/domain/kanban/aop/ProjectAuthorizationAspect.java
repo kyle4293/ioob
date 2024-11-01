@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,17 @@ public class ProjectAuthorizationAspect {
     // 프로젝트와 보드에 대한 권한 확인
     @Before("projectBoardOperations(projectId) || projectOperations(projectId)")
     public void checkProjectAuthorization(Long projectId) {
+        // 현재 사용자의 이메일과 권한 가져오기
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+        // ROLE_ADMIN이면 모든 접근 허용
+        if (isAdmin) {
+            return;
+        }
+
+        // ROLE_ADMIN이 아닌 경우, 권한 검사를 수행
         if (!roleService.isUserInProject(projectId, email)) {
             throw new CustomException(ErrorCode.PERMISSION_DENIED);
         }

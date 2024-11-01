@@ -2,7 +2,6 @@ package com.ioob.backend.global.config;
 
 import com.ioob.backend.global.security.*;
 import com.ioob.backend.domain.auth.repository.RefreshTokenRepository;
-//import com.ioob.backend.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,10 +30,8 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
-    private final CustomAccessDeniedHandler accessDeniedHandler;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,10 +44,6 @@ public class SecurityConfig {
                                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**","/api/auth/register","/api/auth/refresh", "/api/auth/logout", "/api/auth/verify").permitAll() // 인증 없이 접근 가능한 엔드포인트 설정
                                 .requestMatchers("/api/backoffice/**").hasRole("ADMIN")
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
-                )
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                                .accessDeniedHandler(accessDeniedHandler)
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);

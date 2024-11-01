@@ -6,11 +6,11 @@ import { taskService } from '../../services/TaskService';
 import BoardColumn from '../Board/BoardColumn';
 import AddUserModal from './AddUserModal';
 import UserModal from './UserModal';
-import BoardModal from '../Board/BoardModal'; // 보드 추가 모달
-import TaskModal from '../Task/TaskModal'; // 테스크 추가 모달
+import BoardModal from '../Board/BoardModal'; 
+import TaskModal from '../Task/TaskModal';
 
 const ProjectDetails = () => {
-  const { id } = useParams(); // 프로젝트 ID
+  const { id } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState({});
   const [boards, setBoards] = useState([]);
@@ -19,8 +19,8 @@ const ProjectDetails = () => {
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [selectedBoardId, setSelectedBoardId] = useState(null); // 테스크 추가 시 선택된 보드
-  const [error, setError] = useState(null); // 에러 상태 관리
+  const [selectedBoardId, setSelectedBoardId] = useState(null);
+  const [error, setError] = useState(null); 
 
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const ProjectDetails = () => {
       } catch (error) {
         console.log(error);
         if (error.response && error.response.status === 403) {
-          setError('프로젝트에 대한 접근 권한이 없습니다.'); // 403 에러 메시지 설정
+          setError('프로젝트에 대한 접근 권한이 없습니다.'); 
         } else {
           setError('프로젝트 정보를 불러오는 중 오류가 발생했습니다.');
         }
@@ -62,24 +62,36 @@ const ProjectDetails = () => {
   }, [boards]);
 
   const handleTaskClick = task => {
-    navigate(`/tasks/${task.id}`); // 테스크 상세 페이지로 이동
+    navigate(`/tasks/${task.id}`); 
   };
 
   const handleBoardCreated = newBoard => {
-    setBoards(prevBoards => [...prevBoards, newBoard]); // 보드 추가 후 리스트 갱신
+    setBoards(prevBoards => [...prevBoards, newBoard]); 
   };
 
   const handleTaskCreated = newTask => {
-    setTasks(prevTasks => [...prevTasks, newTask]); // 테스크 추가 후 리스트 갱신
+    setTasks(prevTasks => [...prevTasks, newTask]); 
   };
 
   const handleAddTask = boardId => {
-    setSelectedBoardId(boardId); // 보드 선택
-    setIsTaskModalOpen(true); // 테스크 추가 모달 열기
+    setSelectedBoardId(boardId); 
+    setIsTaskModalOpen(true); 
+  };
+
+  const handleDeleteProject = async () => {
+    console.log("del")
+    try {
+      await projectService.deleteProject(id); // 프로젝트 삭제 API 호출
+      alert('프로젝트가 삭제되었습니다.');
+      navigate('/projects'); // 프로젝트 목록 페이지로 이동
+    } catch (error) {
+      console.error('프로젝트 삭제 중 오류 발생:', error);
+      alert('프로젝트 삭제 실패');
+    }
   };
 
   if (error) {
-    return <div>{error}</div>; // 에러 발생 시 에러 메시지 렌더링
+    return <div>{error}</div>;
   }
 
   return (
@@ -94,28 +106,24 @@ const ProjectDetails = () => {
             board={board}
             tasks={tasks.filter(task => task.boardId === board.id)}
             onTaskClick={handleTaskClick}
-            onAddTask={handleAddTask} // 테스크 추가 버튼 클릭 시 호출
+            onAddTask={handleAddTask} 
           />
         ))}
       </div>
 
-      <button onClick={() => setIsBoardModalOpen(true)}>보드 추가</button> {/* 보드 추가 버튼 */}
-      <button onClick={() => console.log('프로젝트 삭제')}>프로젝트 삭제</button>
+      <button onClick={() => setIsBoardModalOpen(true)}>보드 추가</button> 
+      <button onClick={handleDeleteProject}>프로젝트 삭제</button>
       <button onClick={() => setIsUserModalOpen(true)}>사용자 목록 보기</button>
       <button onClick={() => setIsAddUserModalOpen(true)}>사용자 추가</button>
 
-      {/* 사용자 목록 모달 */}
       {isUserModalOpen && (
         <UserModal projectId={id} onClose={() => setIsUserModalOpen(false)} />
       )}
 
-      {/* 사용자 추가 모달 */}
       {isAddUserModalOpen && <AddUserModal projectId={id} onClose={() => setIsAddUserModalOpen(false)} />}
 
-      {/* 보드 추가 모달 */}
       {isBoardModalOpen && <BoardModal projectId={id} onClose={() => setIsBoardModalOpen(false)} onBoardCreated={handleBoardCreated} />}
 
-      {/* 테스크 추가 모달 */}
       {isTaskModalOpen && (
         <TaskModal
           boardId={selectedBoardId}

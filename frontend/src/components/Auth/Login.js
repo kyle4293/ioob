@@ -12,7 +12,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await login({ email, password });
-      navigate('/projects');  // 로그인 성공 시 프로젝트 페이지로 이동
+      navigate('/');  
     } catch (error) {
       alert('로그인 실패');
     }

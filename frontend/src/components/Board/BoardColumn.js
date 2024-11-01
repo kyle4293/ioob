@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import TaskList from '../Task/TaskList';
+import { boardService } from '../../services/BoardService';
 
-const BoardColumn = ({ board, tasks, onTaskClick, onAddTask, onEditBoard, onDeleteBoard }) => {
+const BoardColumn = ({ board, tasks, onTaskClick, onAddTask }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedBoardName, setEditedBoardName] = useState(board.name);
@@ -13,8 +14,9 @@ const BoardColumn = ({ board, tasks, onTaskClick, onAddTask, onEditBoard, onDele
   // 보드 편집 기능
   const handleEditBoard = async () => {
     try {
-      await onEditBoard(board.id, editedBoardName);
+      await boardService.editBoard(board.id, { name: editedBoardName });
       setIsEditing(false);
+      console.log('보드가 수정되었습니다.');
     } catch (error) {
       console.error('보드 편집 중 오류 발생:', error);
     }
@@ -24,7 +26,7 @@ const BoardColumn = ({ board, tasks, onTaskClick, onAddTask, onEditBoard, onDele
   const handleDeleteBoard = async () => {
     if (window.confirm('정말 이 보드를 삭제하시겠습니까?')) {
       try {
-        await onDeleteBoard(board.id);
+        await boardService.deleteBoard(board.id);
         console.log('보드가 삭제되었습니다.');
       } catch (error) {
         console.error('보드 삭제 중 오류 발생:', error);

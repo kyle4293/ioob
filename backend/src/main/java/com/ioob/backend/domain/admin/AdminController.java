@@ -29,6 +29,12 @@ public class AdminController {
         return userService.getAllUsers();
     }
 
+    @Operation(summary = "사용자 조회", description = "사용자를 조회하는 관리자 전용 API")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/users/{id}")
+    public UserInfoDto getUsers(@PathVariable Long id) {
+        return userService.getUser(id);
+    }
 
     @Operation(summary = "사용자 삭제", description = "ID를 통해 사용자를 삭제하는 관리자 전용 API")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
