@@ -45,8 +45,11 @@ public class SecurityConfig {
                                 .requestMatchers("/api/backoffice/**").hasRole("ADMIN")
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthorizationFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(new CustomAccessDeniedHandler()) // 권한 없음 처리
+                )
+                .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

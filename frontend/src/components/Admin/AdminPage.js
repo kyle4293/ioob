@@ -12,12 +12,17 @@ const AdminPage = () => {
         const data = await adminService.getUsers();
         setUsers(data);
       } catch (error) {
-        console.error('사용자 목록을 가져오는 중 오류 발생:', error);
+        if (error.response && error.response.status === 403) {
+          alert('접근 권한이 없습니다.');
+          navigate('/'); 
+        } else {
+          console.error('사용자 목록을 가져오는 중 오류 발생:', error);
+        }
       }
     };
 
     fetchUsers();
-  }, []);
+  }, [navigate]);
 
   const handleDeleteUser = async (id) => {
     try {

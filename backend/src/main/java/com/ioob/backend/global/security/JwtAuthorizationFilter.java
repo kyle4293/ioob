@@ -47,13 +47,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String tokenValue = jwtUtil.getTokenFromRequest(request);
         log.info("token: "+tokenValue);
 
-        try {
-            if (tokenValue != null && jwtUtil.validateToken(tokenValue)) {
-                String email = jwtUtil.getEmailFromToken(tokenValue);
-                setAuthentication(email, request);
+        if (tokenValue != null) {
+            try {
+                if (jwtUtil.validateToken(tokenValue)) {
+                    String email = jwtUtil.getEmailFromToken(tokenValue);
+                    setAuthentication(email, request);
+                }
+            } catch (ExpiredJwtException e) {
+                sendErrorResponse(response, ErrorCode.TOKEN_EXPIRED);
+                return;
+            } catch (JwtException e) {
+                sendErrorResponse(response, ErrorCode.INVALID_TOKEN);
+                return;
             }
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        } else {
+            sendErrorResponse(response, ErrorCode.TOKEN_NOT_FOUND);
+            return;
         }
 
         chain.doFilter(request, response);
@@ -65,5 +74,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private void sendErrorResponse(HttpServletResponse res, ErrorCode errorCode) throws IOException {
+        ApiResponse<Object> apiResponse = ApiResponse.failure(errorCode.getMessage());
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        res.setStatus(errorCode.getStatus().value());
+        res.getWriter().write(new ObjectMapper().writeValueAsString(apiResponse));
     }
 }

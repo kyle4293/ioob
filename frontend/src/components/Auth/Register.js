@@ -6,16 +6,20 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);  
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);  
     try {
       await authService.register({ email, password, name });
       alert('회원가입 성공');
-      navigate('/login');  // 회원가입 후 로그인 페이지로 이동
+      navigate('/login');  
     } catch (error) {
       alert('회원가입 실패');
+    } finally {
+      setLoading(false);  
     }
   };
 
@@ -44,7 +48,8 @@ const Register = () => {
           placeholder="비밀번호"
           required
         />
-        <button type="submit">회원가입</button>
+        <button type="submit" disabled={loading}>회원가입</button>
+        {loading && <div className="loading-spinner">로딩 중...</div>}
       </form>
     </div>
   );

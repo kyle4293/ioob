@@ -14,7 +14,7 @@ const Login = () => {
       await login({ email, password });
       navigate('/');  
     } catch (error) {
-      alert('로그인 실패');
+      alert(error.message); // 서버에서 받은 에러 메시지 표시
     }
   };
 
