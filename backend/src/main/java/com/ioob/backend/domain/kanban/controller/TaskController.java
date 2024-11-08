@@ -74,7 +74,7 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}/comments/{commentId}")
-    public CommentResponseDto updateComment(@PathVariable Long commentId,
+    public CommentResponseDto updateComment(@PathVariable Long taskId, @PathVariable Long commentId,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails,
                                             @RequestBody CommentRequestDto dto) {
         User user = userDetails.getUser();
@@ -82,7 +82,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{taskId}/comments/{commentId}")
-    public void deleteComment(@PathVariable Long commentId,
+    public void deleteComment(@PathVariable Long taskId, @PathVariable Long commentId,
                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         taskService.deleteComment(commentId, user);

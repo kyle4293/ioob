@@ -56,12 +56,7 @@ public class ProjectController {
         projectService.deleteProject(userDetails.getUser(), id);
     }
 
-    @Operation(summary = "프로젝트 권한 부여", description = "프로젝트 관리자만 권한을 부여할 수 있습니다.",
-    parameters = {
-        @Parameter(name = "projectId", description = "권한을 부여할 프로젝트 ID", example = "1"),
-        @Parameter(name = "userEmail", description = "권한을 부여할 사용자 Email", example = "wwkyle01@gmail.com"),
-        @Parameter(name = "roleName", description = "부여할 권한 (ROLE_PROJECT_ADMIN 또는 ROLE_USER)", example = "ROLE_USER")
-    })
+    @Operation(summary = "프로젝트 권한 부여", description = "프로젝트 관리자만 권한을 부여할 수 있습니다.")
     @PostMapping("/{projectId}/assign-role")
     public void assignRoleToUser(
             @PathVariable Long projectId,
