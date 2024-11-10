@@ -2,14 +2,13 @@ package com.ioob.backend.global.service;
 
 import com.ioob.backend.global.exception.CustomException;
 import com.ioob.backend.global.exception.ErrorCode;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 
 @RequiredArgsConstructor
 @Service

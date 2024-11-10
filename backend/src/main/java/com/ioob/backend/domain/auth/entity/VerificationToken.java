@@ -1,10 +1,10 @@
 package com.ioob.backend.domain.auth.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;

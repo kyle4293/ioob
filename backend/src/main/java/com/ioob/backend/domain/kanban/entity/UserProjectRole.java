@@ -25,7 +25,7 @@ public class UserProjectRole {
     private Project project;
 
     @Enumerated(EnumType.STRING)
-    private Role role;  // Role Enum으로 역할을 저장
+    private Role role;
 
     @Builder
     public UserProjectRole(User user, Project project, Role role) {

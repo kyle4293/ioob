@@ -1,7 +1,7 @@
 package com.ioob.backend.global.config;
 
-import com.ioob.backend.global.security.*;
 import com.ioob.backend.domain.auth.repository.RefreshTokenRepository;
+import com.ioob.backend.global.security.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -3,13 +3,7 @@ package com.ioob.backend.domain.kanban.entity;
 import com.ioob.backend.domain.auth.entity.User;
 import com.ioob.backend.global.entity.Timestamped;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Getter

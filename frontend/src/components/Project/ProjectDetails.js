@@ -79,14 +79,15 @@ const ProjectDetails = () => {
   };
 
   const handleDeleteProject = async () => {
-    console.log("del")
-    try {
-      await projectService.deleteProject(id); // 프로젝트 삭제 API 호출
-      alert('프로젝트가 삭제되었습니다.');
-      navigate('/projects'); // 프로젝트 목록 페이지로 이동
-    } catch (error) {
-      console.error('프로젝트 삭제 중 오류 발생:', error);
-      alert('프로젝트 삭제 실패');
+    if (window.confirm('정말 이 프로젝트를 삭제하시겠습니까?')) {
+      try {
+        await projectService.deleteProject(id); 
+        alert('프로젝트가 삭제되었습니다.');
+        navigate('/projects');
+      } catch (error) {
+        console.error('프로젝트 삭제 중 오류 발생:', error);
+        alert('프로젝트 삭제 권한이 없습니다.');
+      }
     }
   };
 

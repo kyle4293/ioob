@@ -1,7 +1,6 @@
 package com.ioob.backend.domain.auth.dto;
 
 import com.ioob.backend.domain.auth.entity.User;
-import com.ioob.backend.domain.auth.entity.VerificationToken;
 import com.ioob.backend.domain.kanban.entity.Role;
 import lombok.Getter;
 

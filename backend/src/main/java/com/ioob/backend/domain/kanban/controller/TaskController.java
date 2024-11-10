@@ -5,7 +5,6 @@ import com.ioob.backend.domain.kanban.dto.CommentRequestDto;
 import com.ioob.backend.domain.kanban.dto.CommentResponseDto;
 import com.ioob.backend.domain.kanban.dto.TaskRequestDto;
 import com.ioob.backend.domain.kanban.dto.TaskResponseDto;
-import com.ioob.backend.domain.kanban.entity.Comment;
 import com.ioob.backend.domain.kanban.service.TaskService;
 import com.ioob.backend.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { taskService } from '../../services/TaskService';
-import CommentSection from './CommentSection'; // 댓글 섹션 컴포넌트
+import CommentSection from './CommentSection'; 
 
 const TaskDetails = () => {
-  const { taskId } = useParams(); // URL에서 테스크 ID 가져옴
+  const { taskId } = useParams(); 
+  const navigate = useNavigate();
   const [task, setTask] = useState(null);
 
   useEffect(() => {
@@ -21,6 +22,19 @@ const TaskDetails = () => {
     fetchTaskDetails();
   }, [taskId]);
 
+  const handleDeleteTask = async () => {
+    if (window.confirm('정말 이 테스크를 삭제하시겠습니까?')) {
+      try {
+        await taskService.deleteTask(taskId); 
+        alert('테스크가 삭제되었습니다.');
+        navigate('/projects');
+      } catch (error) {
+        console.error('테스크 삭제 중 오류 발생:', error);
+        alert('테스크 삭제 권한이 없습니다.');
+      }
+    }
+  };
+
   if (!task) {
     return <div>로딩 중...</div>;
   }
@@ -33,9 +47,8 @@ const TaskDetails = () => {
       <p>담당자: {task.userName}</p>
 
       <button onClick={() => console.log('테스크 편집 클릭')}>테스크 편집</button>
-      <button onClick={() => console.log('테스크 삭제 클릭')}>테스크 삭제</button>
+      <button onClick={handleDeleteTask}>테스크 삭제</button>
 
-      {/* 댓글 섹션 추가 */}
       <CommentSection taskId={taskId} />
     </div>
   );

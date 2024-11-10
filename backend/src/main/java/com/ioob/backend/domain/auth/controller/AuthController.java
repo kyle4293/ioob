@@ -1,8 +1,8 @@
 package com.ioob.backend.domain.auth.controller;
 
 import com.ioob.backend.domain.auth.dto.UserLoginRequestDto;
-import com.ioob.backend.domain.auth.service.AuthService;
 import com.ioob.backend.domain.auth.dto.UserRegisterRequestDto;
+import com.ioob.backend.domain.auth.service.AuthService;
 import com.ioob.backend.domain.auth.service.UserService;
 import com.ioob.backend.global.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +11,6 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 

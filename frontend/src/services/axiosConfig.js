@@ -37,6 +37,7 @@ apiClient.interceptors.response.use(
       } catch (err) {
         console.error('Token 재발급 실패', err);
         authService.logout(); // Token 재발급 실패 시 로그아웃 처리
+        localStorage.removeItem('userEmail'); // 로컬 스토리지에서 이메일 삭제
         window.location.href = '/login'; // 로그인 페이지로 이동
         return Promise.reject(error);
       }

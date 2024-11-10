@@ -33,7 +33,7 @@ public class User extends Timestamped {
     private boolean enabled = false; // 이메일 인증 여부
 
     @Enumerated(EnumType.STRING)
-    private Role role;  // 전역 역할 (ROLE_ADMIN, ROLE_USER 등)
+    private Role role;  // 전역 역할 (ROLE_ADMIN, ROLE_USER)
 
     private User(String name, String email, String password, Role role) {
         this.name = name;

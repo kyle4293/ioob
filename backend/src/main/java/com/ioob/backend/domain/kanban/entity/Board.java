@@ -1,14 +1,14 @@
 package com.ioob.backend.domain.kanban.entity;
 
-import lombok.*;
-
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Board {
@@ -25,11 +25,5 @@ public class Board {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
-
-    @Builder
-    public Board(String name, Project project) {
-        this.name = name;
-        this.project = project;
-    }
 
 }

@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResponse<String>> handleCustomException(CustomException ex) {
         return ResponseEntity
-                .status(ex.getErrorCode().getStatus()) // ErrorCode의 상태 코드 사용
+                .status(ex.getErrorCode().getStatus())
                 .body(ApiResponse.failure(ex.getErrorCode().getStatus().name(), ex.getMessage()));
     }
 

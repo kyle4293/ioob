@@ -2,13 +2,8 @@ package com.ioob.backend.domain.kanban.entity;
 
 import com.ioob.backend.domain.auth.entity.User;
 import com.ioob.backend.global.entity.Timestamped;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 

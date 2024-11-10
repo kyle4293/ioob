@@ -2,7 +2,6 @@ package com.ioob.backend.domain.kanban.dto;
 
 import com.ioob.backend.domain.kanban.entity.Role;
 import com.ioob.backend.domain.kanban.entity.UserProjectRole;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,6 +1,5 @@
 package com.ioob.backend.domain.kanban.dto;
 
-import com.ioob.backend.domain.auth.entity.User;
 import com.ioob.backend.domain.kanban.entity.Comment;
 import lombok.Getter;
 

@@ -1,17 +1,17 @@
 package com.ioob.backend.domain.kanban.service;
 
+import com.ioob.backend.domain.auth.entity.User;
+import com.ioob.backend.domain.auth.repository.UserRepository;
 import com.ioob.backend.domain.kanban.dto.ProjectRequestDto;
 import com.ioob.backend.domain.kanban.dto.ProjectResponseDto;
 import com.ioob.backend.domain.kanban.dto.UserProjectRoleDto;
 import com.ioob.backend.domain.kanban.entity.Project;
 import com.ioob.backend.domain.kanban.entity.Role;
-import com.ioob.backend.domain.auth.entity.User;
 import com.ioob.backend.domain.kanban.entity.UserProjectRole;
-import com.ioob.backend.global.exception.CustomException;
-import com.ioob.backend.global.exception.ErrorCode;
 import com.ioob.backend.domain.kanban.repository.ProjectRepository;
 import com.ioob.backend.domain.kanban.repository.UserProjectRoleRepository;
-import com.ioob.backend.domain.auth.repository.UserRepository;
+import com.ioob.backend.global.exception.CustomException;
+import com.ioob.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

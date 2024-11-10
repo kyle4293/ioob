@@ -14,5 +14,5 @@ public class BoardRequestDto {
     @Schema(description = "보드 이름", example = "New Board")
     private String name;
     @Schema(description = "프로젝트 ID", example = "1")
-    private Long projectId; // 해당 보드가 속한 프로젝트 ID
+    private Long projectId;
 }
