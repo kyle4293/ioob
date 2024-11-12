@@ -21,9 +21,6 @@ public class JwtUtil {
     public static final String REFRESH_TOKEN_COOKIE = "RefreshToken";
     protected final long ACCESS_TOKEN_EXPIRATION = 15 * 60 * 1000L; // 15분
     protected final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000L; // 7일
-//    protected final long ACCESS_TOKEN_EXPIRATION = 10 * 1000L; // test
-//    protected final long REFRESH_TOKEN_EXPIRATION = 60 * 1000L; // test
-
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -37,7 +34,6 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // Access Token 생성
     public String createAccessToken(String email, String role) {
         Date now = new Date();
         return Jwts.builder()
@@ -49,8 +45,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Refresh Token 생성
-    public String createRefreshToken(Date now,Date expirationDate) {
+    public String createRefreshToken(Date now, Date expirationDate) {
 
         return Jwts.builder()
                 .setIssuedAt(now)
@@ -59,12 +54,10 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 토큰에서 이메일 추출
     public String getEmailFromToken(String token) {
         return extractClaims(token).getSubject();
     }
 
-    // 토큰 유효성 검증
     public boolean validateToken(String token) {
         try {
             extractClaims(token);
@@ -86,7 +79,6 @@ public class JwtUtil {
                 .getBody();
     }
 
-    // Token 쿠키에 저장
     public void addJwtToCookie(String accessToken, String refreshToken, HttpServletResponse res) {
         Cookie accessCookie = new Cookie(AUTHORIZATION_HEADER, accessToken);
         Cookie refreshCookie = new Cookie(REFRESH_TOKEN_COOKIE, refreshToken);
@@ -125,7 +117,6 @@ public class JwtUtil {
         return null;
     }
 
-    // 쿠키 삭제 로직
     public void deleteJwtCookies(HttpServletResponse response) {
         deleteCookie(response, AUTHORIZATION_HEADER);
         deleteCookie(response, REFRESH_TOKEN_COOKIE);
@@ -133,7 +124,7 @@ public class JwtUtil {
 
     private void deleteCookie(HttpServletResponse response, String cookieName) {
         Cookie cookie = new Cookie(cookieName, null);
-        cookie.setMaxAge(0);  // 즉시 만료
+        cookie.setMaxAge(0);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         response.addCookie(cookie);

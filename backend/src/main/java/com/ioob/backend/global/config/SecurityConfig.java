@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**","/api/auth/register","/api/auth/refresh", "/api/auth/logout", "/api/auth/verify").permitAll() // 인증 없이 접근 가능한 엔드포인트 설정
-                                .requestMatchers("/api/backoffice/**").hasRole("ADMIN")
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling

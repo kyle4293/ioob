@@ -41,10 +41,8 @@ public class AuthService {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        // 비밀번호 암호화
         String encryptedPassword = passwordEncoder.encode(dto.getPassword());
 
-        // User 엔티티 생성 시 암호화된 비밀번호를 사용
         User user = User.createUser(dto.getName(),dto.getEmail(),encryptedPassword, Role.ROLE_USER);
 
         userRepository.save(user);
@@ -53,20 +51,16 @@ public class AuthService {
         emailService.sendVerificationEmail(user.getEmail(), verificationToken.getToken());
     }
 
-    // Access Token 재발급 처리
     public void reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = jwtUtil.getRefreshTokenFromRequest(request);
         try {
             log.info("refreshToken="+refreshToken);
             jwtUtil.validateToken(refreshToken);
         } catch (ExpiredJwtException e) {
-            // refresh token 만료시 쿠키에서 삭제
-            jwtUtil.deleteJwtCookies(response);  // 쿠키 삭제
+            jwtUtil.deleteJwtCookies(response);
             throw new CustomException(ErrorCode.TOKEN_EXPIRED);
         }
 
-//        refresh token은 보안성을 위해 이메일 정보를 갖고 있지 않으므로
-//        서버에 이메일 정보와 토큰을 함께 저장하고, 토큰 재발급 시에 이를 사용해 검증함.
         RefreshToken refreshTokenRecord = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new CustomException(ErrorCode.TOKEN_NOT_FOUND));
 
@@ -79,8 +73,7 @@ public class AuthService {
         jwtUtil.addJwtToCookie(newAccessToken, refreshToken, response);
     }
 
-    // 로그아웃 처리
     public void logout(HttpServletResponse response) {
-        jwtUtil.deleteJwtCookies(response);  // 쿠키 삭제
+        jwtUtil.deleteJwtCookies(response);
     }
 }

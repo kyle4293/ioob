@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Admin", description = "관리자 전용 백오피스 API")
+@Tag(name = "Admin", description = "관리자 전용 API")
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor

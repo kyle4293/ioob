@@ -24,13 +24,12 @@ public class EmailService {
 
             String confirmationUrl = env.getProperty("app.baseUrl") + "/api/auth/verify?token=" + token;
 
-            // StringBuilder를 이용한 문자열 결합
             messageBuilder.append("<p>Please click the link below to verify your email:</p>")
                     .append("<a href=\"")
                     .append(confirmationUrl)
                     .append("\">Verify Email</a>");
 
-            String message = messageBuilder.toString();  // 최종 문자열로 변환
+            String message = messageBuilder.toString();
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");

@@ -41,11 +41,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String tokenValue = jwtUtil.getTokenFromRequest(request);
-        log.info("token: "+tokenValue);
 
         if (tokenValue != null) {
             try {
