@@ -16,7 +16,7 @@ const BoardColumn = ({ projectId, board, onBoardUpdated, onBoardDeleted }) => {
 
   const handleOpenTaskModal = () => {
     setIsTaskModalOpen(true);
-    setIsDropdownOpen(false); // 드롭다운 닫기
+    setIsDropdownOpen(false); 
   };
 
   const handleCloseTaskModal = () => {
@@ -28,10 +28,9 @@ const BoardColumn = ({ projectId, board, onBoardUpdated, onBoardDeleted }) => {
     handleCloseTaskModal();
   };
 
-  // 보드 이름 수정 처리
   const handleEditBoard = async () => {
     try {
-      const updatedBoard = await boardService.editBoard(board.id, { name: editedBoardName });
+      const updatedBoard = await boardService.editBoard(projectId, board.id, { name: editedBoardName });
       onBoardUpdated(updatedBoard);
       setIsEditing(false);
       setIsDropdownOpen(false);
@@ -40,11 +39,10 @@ const BoardColumn = ({ projectId, board, onBoardUpdated, onBoardDeleted }) => {
     }
   };
 
-  // 보드 삭제 처리
   const handleDeleteBoard = async () => {
     if (window.confirm('정말 이 보드를 삭제하시겠습니까?')) {
       try {
-        await boardService.deleteBoard(board.id);
+        await boardService.deleteBoard(projectId, board.id);
         onBoardDeleted(board.id);
         setIsDropdownOpen(false);
       } catch (error) {
@@ -53,12 +51,10 @@ const BoardColumn = ({ projectId, board, onBoardUpdated, onBoardDeleted }) => {
     }
   };
 
-  // 드롭다운 열기/닫기
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  // 외부 클릭 감지하여 드롭다운 닫기
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

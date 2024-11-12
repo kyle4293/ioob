@@ -32,8 +32,8 @@ public class BoardController {
 
     @Operation(summary = "보드 수정", description = "ID를 통해 특정 보드를 수정하는 API")
     @PutMapping("/{boardId}")
-    public BoardResponseDto updateBoard(@PathVariable Long projectId, @RequestBody BoardRequestDto boardRequestDto) {
-        return boardService.updateBoard(projectId,boardRequestDto);
+    public BoardResponseDto updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto boardRequestDto) {
+        return boardService.updateBoard(boardId, boardRequestDto);
     }
 
     @Operation(summary = "보드 삭제", description = "ID를 통해 특정 보드를 삭제하는 API")

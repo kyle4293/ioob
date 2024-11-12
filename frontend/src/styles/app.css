@@ -255,6 +255,10 @@ form button:hover {
 }
 
 /* 프로젝트 세부 정보 및 보드, 테스크 스타일 */
+.project-details {
+  padding: 20px;
+}
+
 .project-details h2 {
   margin-bottom: 10px;
 }
