@@ -43,56 +43,44 @@ public class TaskService {
                 .board(board)
                 .build();
         task = taskRepository.save(task);
-        return new TaskResponseDto(task);
+        return TaskResponseDto.of(task);
     }
 
     @Transactional(readOnly = true)
-    public List<TaskResponseDto> getAllTasks(Long boardId) {
+    public List<TaskResponseDto> getTasksByBoardId(Long boardId) {
         return taskRepository.findByBoardId(boardId).stream()
-                .map(TaskResponseDto::new)
+                .map(TaskResponseDto::of)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public TaskResponseDto getTaskById(Long id) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
-        return new TaskResponseDto(task);
-    }
-
-    @Transactional(readOnly = true)
-    public List<TaskResponseDto> getUserTasks(Long userId) {
-        List<Task> tasks = taskRepository.findByUserId(userId);
-        if (tasks.isEmpty()) {
-            throw new CustomException(ErrorCode.TASK_NOT_FOUND);
-        }
-
-        return tasks.stream()
-                .map(TaskResponseDto::new)
-                .collect(Collectors.toList());
+        Task task = findTaskById(id);
+        return TaskResponseDto.of(task);
     }
 
     @Transactional
-    public TaskResponseDto updateTask(Long id, TaskRequestDto taskRequestDto) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+    public TaskResponseDto updateTask(User user, Long id, TaskRequestDto taskRequestDto) {
+        Task task = findTaskById(id);
+        checkPermission(user, task.getUser().getId());
+
         task.setTitle(taskRequestDto.getTitle());
         task.setDescription(taskRequestDto.getDescription());
         task.setStatus(Status.valueOf(taskRequestDto.getStatus()));
-        return new TaskResponseDto(task);
+        return TaskResponseDto.of(task);
     }
 
     @Transactional
-    public void deleteTask(Long id) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+    public void deleteTask(User user, Long id) {
+        Task task = findTaskById(id);
+        checkPermission(user, task.getUser().getId());
+
         taskRepository.delete(task);
     }
 
     @Transactional
-    public CommentResponseDto addComment(Long taskId, User user, CommentRequestDto dto) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+    public CommentResponseDto addComment(User user, Long taskId, CommentRequestDto dto) {
+        Task task = findTaskById(taskId);
 
         Comment comment = Comment.builder()
                 .content(dto.getContent())
@@ -111,27 +99,35 @@ public class TaskService {
     }
 
     @Transactional
-    public CommentResponseDto updateComment(Long commentId, User user, CommentRequestDto dto) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
-
-        if (!comment.getUser().getId().equals(user.getId())) {
-            throw new CustomException(ErrorCode.PERMISSION_DENIED);
-        }
+    public CommentResponseDto updateComment(User user, Long commentId, CommentRequestDto dto) {
+        Comment comment = findCommentById(commentId);
+        checkPermission(user, comment.getUser().getId());
 
         comment.setContent(dto.getContent());
         return CommentResponseDto.from(comment);
     }
 
     @Transactional
-    public void deleteComment(Long commentId, User user) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
-
-        if (!comment.getUser().getId().equals(user.getId())) {
-            throw new CustomException(ErrorCode.PERMISSION_DENIED);
-        }
+    public void deleteComment(User user, Long commentId) {
+        Comment comment = findCommentById(commentId);
+        checkPermission(user, comment.getUser().getId());
 
         commentRepository.delete(comment);
+    }
+
+    private Comment findCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+    }
+
+    private Task findTaskById(Long taskId) {
+        return taskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+    }
+
+    private void checkPermission(User user, Long checkedId) {
+        if (!checkedId.equals(user.getId())) {
+            throw new CustomException(ErrorCode.PERMISSION_DENIED);
+        }
     }
 }

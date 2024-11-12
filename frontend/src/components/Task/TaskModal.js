@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { taskService } from '../../services/TaskService';
 
-const TaskModal = ({ boardId, onClose, onTaskCreated }) => {
+const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('TODO'); // 기본값은 'TODO'
@@ -12,11 +12,11 @@ const TaskModal = ({ boardId, onClose, onTaskCreated }) => {
         title,
         description,
         status,
-        boardId, // 보드 ID 필요
+        boardId, 
       };
-      const newTask = await taskService.createTask(taskRequest);
-      onTaskCreated(newTask); // 테스크가 생성되면 부모 컴포넌트에서 리스트를 갱신함
-      onClose(); // 모달 닫기
+      const newTask = await taskService.createTask(projectId, boardId, taskRequest);
+      onTaskCreated(newTask);
+      onClose();
     } catch (error) {
       console.error('테스크 생성 중 오류 발생:', error);
     }

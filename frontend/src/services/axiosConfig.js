@@ -18,6 +18,7 @@ apiClient.interceptors.response.use(
 
     // 401 에러가 발생하고, originalRequest가 이미 한번 시도되지 않은 경우에만 처리
     if (error.response.status === 401 && !originalRequest._retry) {
+      console.log("refresh")
       originalRequest._retry = true;
 
       try {

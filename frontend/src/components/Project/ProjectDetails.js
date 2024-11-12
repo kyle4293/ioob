@@ -2,34 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { projectService } from '../../services/ProjectService';
 import { boardService } from '../../services/BoardService';
-import { taskService } from '../../services/TaskService';
 import BoardColumn from '../Board/BoardColumn';
 import AddUserModal from './AddUserModal';
 import UserModal from './UserModal';
 import BoardModal from '../Board/BoardModal'; 
-import TaskModal from '../Task/TaskModal';
 
 const ProjectDetails = () => {
-  const { id } = useParams();
+  const { id: projectId } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState({});
-  const [boards, setBoards] = useState([]);
-  const [tasks, setTasks] = useState([]);
+  const [boards, setBoards] = useState([]); 
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [selectedBoardId, setSelectedBoardId] = useState(null);
   const [error, setError] = useState(null); 
-
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
-        const projectData = await projectService.getProjectDetails(id);
+        const projectData = await projectService.getProjectDetails(projectId);
         setProject(projectData);
 
-        const boardData = await boardService.getBoards(id);
+        const boardData = await boardService.getBoards(projectId); 
+        console.log(boardData);
         setBoards(boardData);
       } catch (error) {
         console.log(error);
@@ -42,46 +37,26 @@ const ProjectDetails = () => {
     };
 
     fetchProjectDetails();
-  }, [id]);
+  }, [projectId]);
 
-  useEffect(() => {
-    if (boards.length > 0) {
-      const fetchTasks = async () => {
-        try {
-          const tasksForBoards = await Promise.all(
-            boards.map(board => taskService.getTasks(board.id))
-          );
-          setTasks(tasksForBoards.flat());
-        } catch (error) {
-          console.error('테스크 정보를 불러오는 중 오류가 발생했습니다:', error);
-        }
-      };
-
-      fetchTasks();
-    }
-  }, [boards]);
-
-  const handleTaskClick = task => {
-    navigate(`/tasks/${task.id}`); 
+  const handleBoardCreated = (newBoard) => {
+    setBoards((prevBoards) => [...prevBoards, newBoard]);
   };
 
-  const handleBoardCreated = newBoard => {
-    setBoards(prevBoards => [...prevBoards, newBoard]); 
+  const handleBoardUpdated = (updatedBoard) => {
+    setBoards((prevBoards) =>
+      prevBoards.map((board) => (board.id === updatedBoard.id ? updatedBoard : board))
+    );
   };
 
-  const handleTaskCreated = newTask => {
-    setTasks(prevTasks => [...prevTasks, newTask]); 
-  };
-
-  const handleAddTask = boardId => {
-    setSelectedBoardId(boardId); 
-    setIsTaskModalOpen(true); 
+  const handleBoardDeleted = (deletedBoardId) => {
+    setBoards((prevBoards) => prevBoards.filter((board) => board.id !== deletedBoardId));
   };
 
   const handleDeleteProject = async () => {
     if (window.confirm('정말 이 프로젝트를 삭제하시겠습니까?')) {
       try {
-        await projectService.deleteProject(id); 
+        await projectService.deleteProject(projectId);
         alert('프로젝트가 삭제되었습니다.');
         navigate('/projects');
       } catch (error) {
@@ -104,10 +79,10 @@ const ProjectDetails = () => {
         {boards.map(board => (
           <BoardColumn
             key={board.id}
+            projectId={projectId}
             board={board}
-            tasks={tasks.filter(task => task.boardId === board.id)}
-            onTaskClick={handleTaskClick}
-            onAddTask={handleAddTask} 
+            onBoardUpdated={handleBoardUpdated}   
+            onBoardDeleted={handleBoardDeleted}  
           />
         ))}
       </div>
@@ -118,18 +93,16 @@ const ProjectDetails = () => {
       <button onClick={() => setIsAddUserModalOpen(true)}>사용자 추가</button>
 
       {isUserModalOpen && (
-        <UserModal projectId={id} onClose={() => setIsUserModalOpen(false)} />
+        <UserModal projectId={projectId} onClose={() => setIsUserModalOpen(false)} />
       )}
 
-      {isAddUserModalOpen && <AddUserModal projectId={id} onClose={() => setIsAddUserModalOpen(false)} />}
+      {isAddUserModalOpen && <AddUserModal projectId={projectId} onClose={() => setIsAddUserModalOpen(false)} />}
 
-      {isBoardModalOpen && <BoardModal projectId={id} onClose={() => setIsBoardModalOpen(false)} onBoardCreated={handleBoardCreated} />}
-
-      {isTaskModalOpen && (
-        <TaskModal
-          boardId={selectedBoardId}
-          onClose={() => setIsTaskModalOpen(false)}
-          onTaskCreated={handleTaskCreated}
+      {isBoardModalOpen && (
+        <BoardModal
+          projectId={projectId}
+          onClose={() => setIsBoardModalOpen(false)}
+          onBoardCreated={handleBoardCreated} 
         />
       )}
     </div>

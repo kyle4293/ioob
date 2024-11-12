@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { projectService } from '../services/ProjectService'; // 프로젝트 서비스
-import { taskService } from '../services/TaskService'; // 테스크 서비스
-import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 useNavigate
+import { authService } from '../services/authService';
+import { useNavigate } from 'react-router-dom'; 
 
 const Home = () => {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // 페이지 이동을 위한 네비게이트 훅
+  const navigate = useNavigate(); 
 
   useEffect(() => {
-    // 프로젝트 목록 가져오기
     const fetchProjects = async () => {
       try {
-        const projectData = await projectService.getMyProjects();
+        const projectData = await authService.getUserProjects();
         setProjects(projectData);
       } catch (err) {
         if (err.response && err.response.status === 404) {
@@ -24,10 +22,9 @@ const Home = () => {
       }
     };
 
-    // 할당된 작업 목록 가져오기
     const fetchTasks = async () => {
       try {
-        const taskData = await taskService.getMyTasks();
+        const taskData = await authService.getUserTasks();
         setTasks(taskData);
       } catch (err) {
         if (err.response && err.response.status === 404) {
@@ -42,25 +39,21 @@ const Home = () => {
     fetchTasks();
   }, []);
 
-  // 프로젝트 클릭 시 상세 페이지로 이동
   const handleProjectClick = (projectId) => {
     navigate(`/projects/${projectId}`);
   };
 
-  // 작업 클릭 시 상세 페이지로 이동
-  const handleTaskClick = (taskId) => {
-    navigate(`/tasks/${taskId}`);
-  };
+  const handleTaskClick = (projectId, boardId, taskId) => {
+    navigate(`/projects/${projectId}/boards/${boardId}/tasks/${taskId}`);
+  };  
 
   return (
     <div className="home-container">
       <h1>내 작업</h1>
 
-      {/* 오류 발생 시 메시지 표시 */}
       {error && <p>{error}</p>}
 
       <div className="sections-container">
-        {/* 프로젝트 목록 */}
         <section>
           <h2>프로젝트</h2>
           {projects.length > 0 ? (
@@ -76,14 +69,13 @@ const Home = () => {
           )}
         </section>
 
-        {/* 할당된 작업 목록 */}
         <section>
           <h2>작업</h2>
           {tasks.length > 0 ? (
             <ul>
               {tasks.map((task) => (
-                <li key={task.id} onClick={() => handleTaskClick(task.id)}>
-                  <strong>{task.title}</strong> - 상태: {task.status}
+                <li key={task.id} onClick={() => handleTaskClick(task.projectId, task.boardId, task.id)}>
+                  <strong>{task.title}</strong> - 프로젝트: {task.projectName}
                 </li>
               ))}
             </ul>

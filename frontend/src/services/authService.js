@@ -28,5 +28,15 @@ export const authService = {
   getProfile: async () => {
     const response = await apiClient.get('/api/users/profile');
     return response.data;
-  }
+  },
+
+  getUserTasks: async () => {
+    const response = await apiClient.get('/api/users/my-tasks');
+    return response.data;
+  },
+
+  getUserProjects: async () => {
+    const response = await apiClient.get('/api/users/my-projects');
+    return response.data;
+  },
 };

@@ -41,16 +41,30 @@ const AdminPage = () => {
   return (
     <div className="admin-page">
       <h2>관리자 페이지</h2>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            <span onClick={() => handleUserClick(user.id)} style={{ cursor: 'pointer', color: 'blue' }}>
-              {user.email}
-            </span>
-            <button onClick={() => handleDeleteUser(user.id)}>삭제</button>
-          </li>
-        ))}
-      </ul>
+      <table>
+        <thead>
+          <tr>
+              <th>ID</th>
+              <th>이름</th>
+              <th>이메일</th>
+              <th>권한</th>
+              <th>상태</th>
+              <th>관리</th>
+          </tr>
+        </thead>
+        <tbody>
+            {users.map(user => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.name}</td>
+                <td onClick={() => handleUserClick(user.id)} style={{ cursor: 'pointer', color: 'blue' }}>{user.email}</td>
+                <td>{user.role}</td>
+                <td>{user.enabled.toString()}</td>
+                <td><button onClick={() => handleDeleteUser(user.id)}>삭제</button></td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
     </div>
   );
 };

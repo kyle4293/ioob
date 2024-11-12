@@ -12,7 +12,7 @@ import java.util.List;
 
 @Tag(name = "Board Management", description = "보드(Board) 관련 CRUD API")
 @RestController
-@RequestMapping("/api/boards")
+@RequestMapping("/api/projects/{projectId}/boards")
 @RequiredArgsConstructor
 public class BoardController {
 
@@ -20,7 +20,7 @@ public class BoardController {
 
     @Operation(summary = "보드 목록 조회", description = "프로젝트 내 모든 보드를 조회하는 API")
     @GetMapping
-    public List<BoardResponseDto> getAllBoards(@RequestParam Long projectId) {
+    public List<BoardResponseDto> getAllBoards(@PathVariable Long projectId) {
         return boardService.getAllBoards(projectId);
     }
 
@@ -31,14 +31,14 @@ public class BoardController {
     }
 
     @Operation(summary = "보드 수정", description = "ID를 통해 특정 보드를 수정하는 API")
-    @PutMapping("/{id}")
-    public BoardResponseDto updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto) {
-        return boardService.updateBoard(id, boardRequestDto);
+    @PutMapping("/{boardId}")
+    public BoardResponseDto updateBoard(@PathVariable Long projectId, @RequestBody BoardRequestDto boardRequestDto) {
+        return boardService.updateBoard(projectId,boardRequestDto);
     }
 
     @Operation(summary = "보드 삭제", description = "ID를 통해 특정 보드를 삭제하는 API")
-    @DeleteMapping("/{id}")
-    public void deleteBoard(@PathVariable Long id) {
-        boardService.deleteBoard(id);
+    @DeleteMapping("/{boardId}")
+    public void deleteBoard(@PathVariable Long boardId) {
+        boardService.deleteBoard(boardId);
     }
 }

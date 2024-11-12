@@ -10,9 +10,9 @@ const BoardModal = ({ projectId, onClose, onBoardCreated }) => {
         name: boardName,
         projectId: projectId,
       };
-      const newBoard = await boardService.createBoard(boardRequest);
-      onBoardCreated(newBoard); // 보드가 생성되면 부모 컴포넌트에서 리스트를 갱신함
-      onClose(); // 모달 닫기
+      const newBoard = await boardService.createBoard(projectId, boardRequest); 
+      onBoardCreated(newBoard); 
+      onClose(); 
     } catch (error) {
       console.error('보드 생성 중 오류 발생:', error);
     }

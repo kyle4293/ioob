@@ -2,6 +2,7 @@ package com.ioob.backend.domain.kanban.service;
 
 import com.ioob.backend.domain.auth.entity.User;
 import com.ioob.backend.domain.auth.repository.UserRepository;
+import com.ioob.backend.domain.kanban.dto.AssignRoleDto;
 import com.ioob.backend.domain.kanban.dto.ProjectRequestDto;
 import com.ioob.backend.domain.kanban.dto.ProjectResponseDto;
 import com.ioob.backend.domain.kanban.dto.UserProjectRoleDto;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -26,20 +28,6 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final UserProjectRoleRepository userProjectRoleRepository;
-
-    @Transactional(readOnly = true)
-    public List<ProjectResponseDto> getAllProjects() {
-        return projectRepository.findAll().stream()
-                .map(ProjectResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public ProjectResponseDto getProjectById(User user, Long id) {
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
-        return new ProjectResponseDto(project);
-    }
 
     @Transactional
     public ProjectResponseDto createProject(User user, ProjectRequestDto projectRequestDto) {
@@ -59,29 +47,17 @@ public class ProjectService {
         return new ProjectResponseDto(project);
     }
 
-    @Transactional
-    public ProjectResponseDto updateProject(Long id, ProjectRequestDto projectRequestDto) {
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
-
-        project.setName(projectRequestDto.getName());
-        project.setDescription(projectRequestDto.getDescription());
-        return new ProjectResponseDto(project);
-    }
-
-    @Transactional
-    public void deleteProject(User user, Long id) {
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
-        projectRepository.delete(project);
+    @Transactional(readOnly = true)
+    public List<ProjectResponseDto> getAllProjects() {
+        return projectRepository.findAll().stream()
+                .map(ProjectResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<ProjectResponseDto> getUserProjects(Long userId) {
-        List<UserProjectRole> userProjectRoles = userProjectRoleRepository.findByUserId(userId);
-        return userProjectRoles.stream()
-                .map(userProjectRole -> new ProjectResponseDto(userProjectRole.getProject()))
-                .collect(Collectors.toList());
+    public ProjectResponseDto getProjectById(User user, Long projectId) {
+        Project project = findProjectById(projectId);
+        return new ProjectResponseDto(project);
     }
 
     @Transactional(readOnly = true)
@@ -89,5 +65,62 @@ public class ProjectService {
         return userProjectRoleRepository.findByProjectId(projectId).stream()
                 .map(UserProjectRoleDto::from)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ProjectResponseDto updateProject(User user, Long projectId, ProjectRequestDto projectRequestDto) {
+        checkProjectAdminPermission(user, projectId);
+
+        Project project = findProjectById(projectId);
+
+        project.setName(projectRequestDto.getName());
+        project.setDescription(projectRequestDto.getDescription());
+        return new ProjectResponseDto(project);
+    }
+
+    @Transactional
+    public void deleteProject(User user, Long projectId) {
+        checkProjectAdminPermission(user, projectId);
+
+        Project project = findProjectById(projectId);
+        projectRepository.delete(project);
+    }
+
+    @Transactional
+    public void assignRoleToUser(User user, Long projectId, AssignRoleDto dto) {
+        Project project = findProjectById(projectId);
+
+        checkProjectAdminPermission(user, projectId);
+
+        User assignedUser = userRepository.findByEmail(dto.getUserEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 권한 부여
+        UserProjectRole userProjectRole = UserProjectRole.builder()
+                .user(assignedUser)
+                .project(project)
+                .role(dto.getRole())
+                .build();
+
+        userProjectRoleRepository.save(userProjectRole);
+    }
+
+    private Project findProjectById(Long projectId) {
+        return projectRepository.findById(projectId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    private void checkProjectAdminPermission(User user, Long projectId) {
+        if (user.isAdmin()) {
+            return;
+        }
+
+        UserProjectRole userProjectRole = userProjectRoleRepository.findByUserEmailAndProjectId(user.getEmail(), projectId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PERMISSION_DENIED));
+
+        if (userProjectRole.getRole() != Role.ROLE_PROJECT_ADMIN) {
+            throw new CustomException(ErrorCode.PERMISSION_DENIED);
+        }
     }
 }
