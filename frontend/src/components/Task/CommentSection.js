@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { taskService } from '../../services/TaskService';
+import dayjs from 'dayjs';
 
 const CommentSection = ({ projectId, boardId, taskId }) => {
   const [comments, setComments] = useState([]);
@@ -35,7 +36,7 @@ const CommentSection = ({ projectId, boardId, taskId }) => {
   const handleEditComment = async (commentId) => {
     try {
       const updatedComment = await taskService.updateComment(projectId, boardId, taskId, commentId, { content: editedContent });
-      setComments(comments.map(c => c.id === commentId ? updatedComment : c));
+      setComments(comments.map(c => (c.id === commentId ? updatedComment : c)));
       setEditingComment(null);
     } catch (error) {
       alert('권한이 없습니다. 댓글을 수정할 수 없습니다.');
@@ -56,8 +57,7 @@ const CommentSection = ({ projectId, boardId, taskId }) => {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+    return dayjs(dateString).format('YYYY-MM-DD HH:mm');
   };
 
   return (
@@ -65,33 +65,41 @@ const CommentSection = ({ projectId, boardId, taskId }) => {
       <h3>댓글</h3>
       <ul>
         {comments.map(comment => (
-          <li key={comment.id}>
+          <li key={comment.id} className="comment-item">
             {editingComment === comment.id ? (
-              <>
-                <input
-                  type="text"
-                  value={editedContent}
-                  onChange={(e) => setEditedContent(e.target.value)}
-                />
-                <button onClick={() => handleEditComment(comment.id)}>저장</button>
-                <button onClick={() => setEditingComment(null)}>취소</button>
-              </>
+              <div className="modal">
+                <div className="modal-content">
+                  <h3>댓글 수정</h3>
+                  <input
+                    type="text"
+                    value={editedContent}
+                    onChange={(e) => setEditedContent(e.target.value)}
+                    className="comment-modal-input"
+                  />
+                  <div className="comment-modal-actions">
+                    <button onClick={() => handleEditComment(comment.id)}>저장</button>
+                    <button onClick={() => setEditingComment(null)}>취소</button>
+                  </div>
+                </div>
+              </div>
             ) : (
               <>
-                <span>{comment.content}</span>
-                <br />
-                <small>작성자: {comment.userName}</small>
-                <br />
-                <small>작성: {formatDate(comment.createdAt)}</small>
-                {comment.createdAt !== comment.modifiedAt && (
-                  <small> (수정: {formatDate(comment.modifiedAt)})</small>
-                )}
-                <br />
-                <button onClick={() => {
-                  setEditingComment(comment.id);
-                  setEditedContent(comment.content);
-                }}>수정</button>
-                <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                <div>
+                  <p className="comment-content">{comment.content}</p>
+                  <div className="comment-meta">
+                    <span>{comment.userName}</span> / <span>{formatDate(comment.createdAt)}</span>
+                    {comment.createdAt !== comment.modifiedAt && (
+                      <small className="comment-edited"> (수정: {formatDate(comment.modifiedAt)})</small>
+                    )}
+                  </div>
+                </div>
+                <div className="comment-actions">
+                  <button onClick={() => {
+                    setEditingComment(comment.id);
+                    setEditedContent(comment.content);
+                  }}>수정</button>
+                  <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                </div>
               </>
             )}
           </li>

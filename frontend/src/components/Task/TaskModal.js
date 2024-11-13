@@ -42,6 +42,7 @@ const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
           <option value="IN_PROGRESS">IN_PROGRESS</option>
           <option value="DONE">DONE</option>
         </select>
+        <br></br>
         <button onClick={handleCreateTask}>테스크 생성</button>
         <button onClick={onClose}>취소</button>
       </div>

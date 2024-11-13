@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { adminService } from '../../services/adminService';
 
 const UserDetails = () => {
-  const { id } = useParams();  // 컴포넌트 최상단에서 useParams 호출
+  const { id } = useParams(); 
   const [profile, setProfile] = useState({});
 
   useEffect(() => {
@@ -17,8 +17,7 @@ const UserDetails = () => {
     };
 
     fetchProfile();
-  }, [id]);  // id를 의존성 배열에 추가하여 변경 시 재실행
-
+  }, [id]);  
   return (
     <div className="user-profile">
       <h2>프로필</h2>

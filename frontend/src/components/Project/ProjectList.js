@@ -22,14 +22,9 @@ const ProjectList = () => {
     navigate(`/projects/${id}`);
   };
 
-  const handleCreateProject = () => {
-    navigate('/projects/new');  // 프로젝트 생성 페이지로 이동
-  };
-
   return (
     <div className="project-list">
       <h2>프로젝트 목록</h2>
-      <button onClick={handleCreateProject}>새 프로젝트 생성</button>
       <ul>
         {projects.map((project) => (
           <li key={project.id} onClick={() => handleProjectClick(project.id)}>

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +25,8 @@ public class TaskResponseDto {
     private String projectName;
     private Long boardId;
     private String userName;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
     private TaskResponseDto(Task task) {
         this.id = task.getId();
@@ -34,6 +37,8 @@ public class TaskResponseDto {
         this.projectId = task.getBoard().getProject().getId();
         this.boardId = task.getBoard().getId();
         this.userName = task.getUser().getName();
+        this.createdAt = task.getCreatedAt();
+        this.modifiedAt = task.getModifiedAt();
     }
 
     public static TaskResponseDto of(Task task) {

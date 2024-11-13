@@ -6,7 +6,6 @@ import Footer from './components/Layout/Footer';
 import Home from './components/Home';
 import ProjectList from './components/Project/ProjectList';
 import ProjectDetails from './components/Project/ProjectDetails';
-import CreateProject from './components/Project/CreateProject';
 import AdminPage from './components/Admin/AdminPage';
 import UserDetails from './components/Admin/UserDetails';
 import UserProfile from './components/User/UserProfile';
@@ -27,7 +26,6 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/projects" element={<ProjectList />} />
-              <Route path="/projects/new" element={<CreateProject />} />  
               <Route path="/projects/:id" element={<ProjectDetails />} />
               <Route path="/projects/:projectId/boards/:boardId/tasks/:taskId" element={<TaskDetails />} />
               <Route path="/admin" element={<AdminPage />} />

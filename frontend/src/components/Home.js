@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { authService } from '../services/authService';
 import { useNavigate } from 'react-router-dom'; 
+import dayjs from 'dayjs';
 
 const Home = () => {
   const [projects, setProjects] = useState([]);
@@ -12,7 +13,8 @@ const Home = () => {
     const fetchProjects = async () => {
       try {
         const projectData = await authService.getUserProjects();
-        setProjects(projectData);
+        const sortedProjects = projectData.sort((a, b) => new Date(b.modifiedAt) - new Date(a.modifiedAt));
+        setProjects(sortedProjects);
       } catch (err) {
         if (err.response && err.response.status === 404) {
           setError('프로젝트가 없습니다.');
@@ -25,7 +27,8 @@ const Home = () => {
     const fetchTasks = async () => {
       try {
         const taskData = await authService.getUserTasks();
-        setTasks(taskData);
+        const sortedTasks = taskData.sort((a, b) => new Date(b.modifiedAt) - new Date(a.modifiedAt));
+        setTasks(sortedTasks);
       } catch (err) {
         if (err.response && err.response.status === 404) {
           setError('할당된 작업이 없습니다.');
@@ -47,41 +50,64 @@ const Home = () => {
     navigate(`/projects/${projectId}/boards/${boardId}/tasks/${taskId}`);
   };  
 
+  // 날짜별로 작업을 그룹화
+  const groupTasksByDate = (tasks) => {
+    return tasks.reduce((acc, task) => {
+      const date = dayjs(task.modifiedAt).format('YYYY-MM-DD');
+      if (!acc[date]) acc[date] = [];
+      acc[date].push(task);
+      return acc;
+    }, {});
+  };
+
+  const groupedTasks = groupTasksByDate(tasks);
+
   return (
     <div className="home-container">
-      <h1>내 작업</h1>
+      <h2>내 작업</h2>
+      <hr />
 
       {error && <p>{error}</p>}
 
       <div className="sections-container">
         <section>
-          <h2>프로젝트</h2>
-          {projects.length > 0 ? (
-            <ul>
-              {projects.map((project) => (
-                <li key={project.id} onClick={() => handleProjectClick(project.id)}>
-                  <strong>{project.name}</strong> - {project.description}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>프로젝트가 없습니다.</p>
-          )}
+          <h3>최근 프로젝트</h3>
+          <div className="project-cards">
+            {projects.length > 0 ? (
+              projects.map((project) => (
+                <div key={project.id} className="card" onClick={() => handleProjectClick(project.id)}>
+                  <div className="card-header">{project.name}</div>
+                  <div className="card-body">{project.description}</div>
+                </div>
+              ))
+            ) : (
+              <p>프로젝트가 없습니다.</p>
+            )}
+          </div>
         </section>
 
         <section>
-          <h2>작업</h2>
-          {tasks.length > 0 ? (
-            <ul>
-              {tasks.map((task) => (
-                <li key={task.id} onClick={() => handleTaskClick(task.projectId, task.boardId, task.id)}>
-                  <strong>{task.title}</strong> - 프로젝트: {task.projectName}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>할당된 작업이 없습니다.</p>
-          )}
+          <h3>최근 작업</h3>
+          {Object.keys(groupedTasks).map((date) => (
+            <div key={date} className="task-date-group">
+              <small className="task-date">{date}</small>
+              <div className="task-list">
+                {groupedTasks[date].map((task) => (
+                  <div
+                    key={task.id}
+                    className="task-item"
+                    onClick={() => handleTaskClick(task.projectId, task.boardId, task.id)}
+                  >
+                    <div>
+                      <span className="task-title">{task.title}</span>
+                      <div className="task-project-name">{task.projectName}</div>
+                    </div>
+                    <span className="home-task-status">{task.status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </section>
       </div>
     </div>

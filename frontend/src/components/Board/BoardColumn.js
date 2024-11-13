@@ -89,7 +89,7 @@ const BoardColumn = ({ projectId, board, onBoardUpdated, onBoardDeleted }) => {
                 <FontAwesomeIcon icon={faEllipsisV} />
               </button>
               {isDropdownOpen && (
-                <div className="dropdown-menu">
+                <div className="board-dropdown-menu">
                   <button onClick={handleOpenTaskModal}>테스크 추가</button>
                   <button onClick={() => setIsEditing(true)}>보드 수정</button>
                   <button onClick={handleDeleteBoard}>보드 삭제</button>

@@ -1,5 +1,6 @@
 package com.ioob.backend.domain.kanban.entity;
 
+import com.ioob.backend.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Table(name = "projects")
-public class Project {
+public class Project extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
