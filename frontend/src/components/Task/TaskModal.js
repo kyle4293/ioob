@@ -1,10 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { projectService } from '../../services/ProjectService';
 import { taskService } from '../../services/TaskService';
 
 const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [status, setStatus] = useState('TODO'); // 기본값은 'TODO'
+  const [status, setStatus] = useState('TODO'); 
+  const [assignedToEmail, setAssignedToEmail] = useState(''); 
+  const [users, setUsers] = useState([]); 
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const userData = await projectService.getUsersInProject(projectId);
+        setUsers(userData);
+      } catch (error) {
+        console.error('프로젝트 사용자 목록 불러오기 오류:', error);
+      }
+    };
+
+    fetchUsers();
+  }, [projectId]);
 
   const handleCreateTask = async () => {
     try {
@@ -13,6 +29,7 @@ const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
         description,
         status,
         boardId, 
+        assignedToEmail,
       };
       const newTask = await taskService.createTask(projectId, boardId, taskRequest);
       onTaskCreated(newTask);
@@ -43,6 +60,17 @@ const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
           <option value="DONE">DONE</option>
         </select>
         <br></br>
+        <select
+          value={assignedToEmail}
+          onChange={(e) => setAssignedToEmail(e.target.value)}
+        >
+          <option value="">담당자 선택</option>
+          {users.map((user) => (
+            <option key={user.userEmail} value={user.userEmail}>
+              {user.userName} ({user.userEmail})
+            </option>
+          ))}
+        </select>
         <button onClick={handleCreateTask}>테스크 생성</button>
         <button onClick={onClose}>취소</button>
       </div>

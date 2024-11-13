@@ -5,13 +5,11 @@ import com.ioob.backend.domain.kanban.dto.CommentRequestDto;
 import com.ioob.backend.domain.kanban.dto.CommentResponseDto;
 import com.ioob.backend.domain.kanban.dto.TaskRequestDto;
 import com.ioob.backend.domain.kanban.dto.TaskResponseDto;
-import com.ioob.backend.domain.kanban.entity.Board;
-import com.ioob.backend.domain.kanban.entity.Comment;
-import com.ioob.backend.domain.kanban.entity.Status;
-import com.ioob.backend.domain.kanban.entity.Task;
+import com.ioob.backend.domain.kanban.entity.*;
 import com.ioob.backend.domain.kanban.repository.BoardRepository;
 import com.ioob.backend.domain.kanban.repository.CommentRepository;
 import com.ioob.backend.domain.kanban.repository.TaskRepository;
+import com.ioob.backend.domain.kanban.repository.UserProjectRoleRepository;
 import com.ioob.backend.global.exception.CustomException;
 import com.ioob.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -30,20 +28,22 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
+    private final UserProjectRoleRepository userProjectRoleRepository;
 
     @Transactional
-    public TaskResponseDto createTask(User user, TaskRequestDto taskRequestDto) {
-        Board board = boardRepository.findById(taskRequestDto.getBoardId())
-                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+    public TaskResponseDto createTask(User user, Long projectId, Long boardId, TaskRequestDto taskRequestDto) {
+        UserProjectRole projectRole = checkAssignedTo(projectId, taskRequestDto);
+
         Task task = Task.builder()
                 .title(taskRequestDto.getTitle())
                 .description(taskRequestDto.getDescription())
                 .status(Status.valueOf(taskRequestDto.getStatus()))
-                .user(user)
-                .board(board)
+                .createdBy(user)
+                .assignedTo(projectRole != null ? projectRole.getUser() : null)
+                .board(findBoardById(boardId))
                 .build();
-        task = taskRepository.save(task);
-        return TaskResponseDto.of(task);
+
+        return TaskResponseDto.of(taskRepository.save(task));
     }
 
     @Transactional(readOnly = true)
@@ -60,20 +60,39 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskResponseDto updateTask(User user, Long id, TaskRequestDto taskRequestDto) {
-        Task task = findTaskById(id);
-        checkPermission(user, task.getUser().getId());
+    public TaskResponseDto updateTask(User user, Long projectId, Long taskId, TaskRequestDto taskRequestDto) {
+        Task task = findTaskById(taskId);
+        checkTaskPermission(user, projectId, task);
 
-        task.setTitle(taskRequestDto.getTitle());
-        task.setDescription(taskRequestDto.getDescription());
-        task.setStatus(Status.valueOf(taskRequestDto.getStatus()));
-        return TaskResponseDto.of(task);
+        UserProjectRole projectRole = checkAssignedTo(projectId, taskRequestDto);
+
+        Task updatedTask = Task.builder()
+                .id(task.getId())
+                .title(taskRequestDto.getTitle())
+                .description(taskRequestDto.getDescription())
+                .status(Status.valueOf(taskRequestDto.getStatus()))
+                .createdBy(task.getCreatedBy())
+                .assignedTo(projectRole != null ? projectRole.getUser() : null)
+                .board(findBoardById(taskRequestDto.getBoardId()))
+                .comments(task.getComments())
+                .build();
+
+        return TaskResponseDto.of(taskRepository.save(updatedTask));
+    }
+
+    private UserProjectRole checkAssignedTo(Long projectId, TaskRequestDto taskRequestDto) {
+        UserProjectRole projectRole = null;
+        if (taskRequestDto.getAssignedToEmail() != null) {
+            projectRole = userProjectRoleRepository.findByUserEmailAndProjectId(taskRequestDto.getAssignedToEmail(), projectId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_IN_PROJECT));
+        }
+        return projectRole;
     }
 
     @Transactional
-    public void deleteTask(User user, Long id) {
-        Task task = findTaskById(id);
-        checkPermission(user, task.getUser().getId());
+    public void deleteTask(User user, Long projectId, Long taskId) {
+        Task task = findTaskById(taskId);
+        checkTaskPermission(user, projectId, task);
 
         taskRepository.delete(task);
     }
@@ -101,7 +120,7 @@ public class TaskService {
     @Transactional
     public CommentResponseDto updateComment(User user, Long commentId, CommentRequestDto dto) {
         Comment comment = findCommentById(commentId);
-        checkPermission(user, comment.getUser().getId());
+        checkCommentPermission(user, comment);
 
         comment.setContent(dto.getContent());
         return CommentResponseDto.from(comment);
@@ -110,7 +129,7 @@ public class TaskService {
     @Transactional
     public void deleteComment(User user, Long commentId) {
         Comment comment = findCommentById(commentId);
-        checkPermission(user, comment.getUser().getId());
+        checkCommentPermission(user, comment);
 
         commentRepository.delete(comment);
     }
@@ -125,8 +144,32 @@ public class TaskService {
                 .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
     }
 
-    private void checkPermission(User user, Long checkedId) {
-        if (!checkedId.equals(user.getId())) {
+    private Board findBoardById(Long boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+    }
+
+    private void checkTaskPermission(User user, Long projectId, Task task) {
+        if (user.isAdmin()) {
+            return;
+        }
+
+        UserProjectRole projectRole  = userProjectRoleRepository.findByUserAndProjectId(user, projectId)
+                .orElseThrow(()->new CustomException(ErrorCode.PERMISSION_DENIED));
+        if (projectRole.getRole().equals(Role.ROLE_PROJECT_ADMIN)) {
+            return;
+        }
+
+        boolean isCreator = task.getCreatedBy().getId().equals(user.getId());
+        boolean isAssignee = task.getAssignedTo() != null && task.getAssignedTo().getId().equals(user.getId());
+
+        if (!(isCreator || isAssignee)) {
+            throw new CustomException(ErrorCode.PERMISSION_DENIED);
+        }
+    }
+
+    private void checkCommentPermission(User user, Comment comment) {
+        if (!comment.getUser().getId().equals(user.getId())) {
             throw new CustomException(ErrorCode.PERMISSION_DENIED);
         }
     }

@@ -16,7 +16,7 @@ const TaskList = ({ tasks }) => {
             <div className="task-title">{task.title}</div>
             <div className="task-info">
               <div className="task-status">{task.status}</div>
-              <div className="task-user">{task.userName || 'Unassigned'}</div>
+              <div className="task-user">{task.assignedToName || 'Unassigned'}</div>
             </div>
           </div>
         ))

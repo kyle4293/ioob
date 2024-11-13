@@ -20,7 +20,8 @@ public enum ErrorCode {
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "Project not found"),
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "Task not found"),
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "Board not found"),
-    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Comment not found");
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Comment not found"),
+    USER_NOT_IN_PROJECT(HttpStatus.BAD_REQUEST, "The user is not a member of the project");
 
     private final HttpStatus status;
     private final String message;

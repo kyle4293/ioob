@@ -27,9 +27,6 @@ public class User extends Timestamped {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<UserProjectRole> userProjectRoles;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Task> tasks;
-
     private boolean enabled = false; // 이메일 인증 여부
 
     @Enumerated(EnumType.STRING)

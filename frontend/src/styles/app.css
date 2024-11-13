@@ -568,7 +568,7 @@ html, body {
 .task-details {
   max-width: 800px;
   margin: 10px auto;
-  padding: 30px;
+  padding: 20px 40px;
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -580,13 +580,14 @@ html, body {
   margin-bottom: 20px;
 }
 
-.task-info h2 {
+.task-project-info h2 {
   margin-bottom: 5px;
 }
 
 .task-project-name {
   font-size: 14px;
   color: #888;
+  margin-top: 0;
   margin-bottom: 5px;
 }
 
@@ -763,4 +764,11 @@ html, body {
 
 .modal-content button:hover {
   background-color: #545454;
+}
+
+.user {
+  display: flex;
+  justify-content: space-between;
+  gap: 80px;
+  padding: 15px 20px;
 }

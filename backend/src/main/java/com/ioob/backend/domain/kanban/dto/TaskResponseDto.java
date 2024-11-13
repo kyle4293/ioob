@@ -24,7 +24,9 @@ public class TaskResponseDto {
     private Long projectId;
     private String projectName;
     private Long boardId;
-    private String userName;
+    private String boardName;
+    private String createdByName;
+    private String assignedToName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -35,8 +37,10 @@ public class TaskResponseDto {
         this.status = task.getStatus();
         this.projectName = task.getBoard().getProject().getName();
         this.projectId = task.getBoard().getProject().getId();
+        this.boardName = task.getBoard().getName();
         this.boardId = task.getBoard().getId();
-        this.userName = task.getUser().getName();
+        this.createdByName = task.getCreatedBy().getName();
+        this.assignedToName = task.getAssignedTo() != null ? task.getAssignedTo().getName() : null;
         this.createdAt = task.getCreatedAt();
         this.modifiedAt = task.getModifiedAt();
     }

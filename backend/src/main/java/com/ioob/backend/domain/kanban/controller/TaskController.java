@@ -25,8 +25,10 @@ public class TaskController {
     @Operation(summary = "작업 생성", description = "새로운 작업을 생성하는 API(TODO, IN_PROGRESS, DONE)")
     @PostMapping
     public TaskResponseDto createTask(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                      @PathVariable  Long projectId,
+                                      @PathVariable  Long boardId,
                                       @RequestBody TaskRequestDto taskRequestDto) {
-        return taskService.createTask(userDetails.getUser(), taskRequestDto);
+        return taskService.createTask(userDetails.getUser(), projectId, boardId, taskRequestDto);
     }
 
     @Operation(summary = "작업 상세 조회", description = "작업 상세 화면을 조회하는 API")
@@ -38,15 +40,18 @@ public class TaskController {
     @Operation(summary = "작업 수정", description = "ID를 통해 특정 작업을 수정하는 API(TODO, IN_PROGRESS, DONE)")
     @PutMapping("/{taskId}")
     public TaskResponseDto updateTask(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                      @PathVariable  Long projectId,
                                       @PathVariable  Long taskId,
                                       @RequestBody TaskRequestDto taskRequestDto) {
-        return taskService.updateTask(userDetails.getUser(), taskId, taskRequestDto);
+        return taskService.updateTask(userDetails.getUser(), projectId, taskId, taskRequestDto);
     }
 
     @Operation(summary = "작업 삭제", description = "ID를 통해 특정 작업을 삭제하는 API")
     @DeleteMapping("/{taskId}")
-    public void deleteTask(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable  Long taskId) {
-        taskService.deleteTask(userDetails.getUser(), taskId);
+    public void deleteTask(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                           @PathVariable  Long projectId,
+                           @PathVariable  Long taskId) {
+        taskService.deleteTask(userDetails.getUser(), projectId, taskId);
     }
 
     @PostMapping("/{taskId}/comments")

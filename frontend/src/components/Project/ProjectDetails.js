@@ -4,7 +4,7 @@ import { projectService } from '../../services/ProjectService';
 import { boardService } from '../../services/BoardService';
 import BoardColumn from '../Board/BoardColumn';
 import AddUserModal from './AddUserModal';
-import UserModal from './UserModal';
+import ProjectUserList from './ProjectUserList';
 import BoardModal from '../Board/BoardModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
@@ -129,7 +129,7 @@ const ProjectDetails = () => {
       </div>
 
       {isUserModalOpen && (
-        <UserModal projectId={projectId} onClose={() => setIsUserModalOpen(false)} />
+        <ProjectUserList projectId={projectId} onClose={() => setIsUserModalOpen(false)} />
       )}
 
       {isAddUserModalOpen && <AddUserModal projectId={projectId} onClose={() => setIsAddUserModalOpen(false)} />}

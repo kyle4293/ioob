@@ -68,7 +68,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<TaskResponseDto> getUserTasks(Long userId) {
-        List<Task> tasks = taskRepository.findByUserId(userId);
+        List<Task> tasks = taskRepository.findByAssignedToId(userId);
         return tasks.stream()
                 .map(TaskResponseDto::of)
                 .collect(Collectors.toList());

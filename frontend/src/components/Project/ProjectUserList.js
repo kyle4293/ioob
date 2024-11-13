@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { projectService } from '../../services/ProjectService';
 
-const UserModal = ({ projectId, onClose }) => {
+const ProjectUserList = ({ projectId, onClose }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -23,8 +23,9 @@ const UserModal = ({ projectId, onClose }) => {
         <h3>프로젝트 사용자 목록</h3>
         <ul>
           {users.map(user => (
-            <li key={user.userEmail}>
-              {user.userName} ({user.userEmail}) - {user.role}
+            <li className='user' key={user.userEmail}>
+              <p>{user.userName} ({user.userEmail})</p> 
+              <p>{user.role === 'ROLE_PROJECT_ADMIN' ? 'Admin' : 'User'}</p>
             </li>
           ))}
         </ul>
@@ -34,4 +35,4 @@ const UserModal = ({ projectId, onClose }) => {
   );
 };
 
-export default UserModal;
+export default ProjectUserList;
