@@ -19,11 +19,15 @@ public class ProjectResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public ProjectResponseDto(Project project) {
+    private ProjectResponseDto(Project project) {
         this.id = project.getId();
         this.name = project.getName();
         this.description = project.getDescription();
         this.createdAt = project.getCreatedAt();
         this.modifiedAt = project.getModifiedAt();
+    }
+
+    public static ProjectResponseDto of(Project project) {
+        return new ProjectResponseDto(project);
     }
 }

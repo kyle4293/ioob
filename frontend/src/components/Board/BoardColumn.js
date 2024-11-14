@@ -1,11 +1,13 @@
+// BoardColumn.js
 import React, { useState, useRef, useEffect } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
 import TaskList from '../Task/TaskList';
 import TaskModal from '../Task/TaskModal';
 import { boardService } from '../../services/BoardService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 
-const BoardColumn = ({ projectId, board, onBoardUpdated, onBoardDeleted }) => {
+const BoardColumn = ({ projectId, board, boardOrder, moveBoard, onBoardUpdated, onBoardDeleted, saveBoardOrder }) => {
   const [tasks, setTasks] = useState(board.tasks || []);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -16,7 +18,7 @@ const BoardColumn = ({ projectId, board, onBoardUpdated, onBoardDeleted }) => {
 
   const handleOpenTaskModal = () => {
     setIsTaskModalOpen(true);
-    setIsDropdownOpen(false); 
+    setIsDropdownOpen(false);
   };
 
   const handleCloseTaskModal = () => {
@@ -67,8 +69,38 @@ const BoardColumn = ({ projectId, board, onBoardUpdated, onBoardDeleted }) => {
     };
   }, []);
 
+  const ref = useRef(null);
+
+  const [{ isDragging }, drag] = useDrag({
+    type: 'BOARD',
+    item: { boardOrder },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [, drop] = useDrop({
+    accept: 'BOARD',
+    hover(item) {
+      if (item.boardOrder !== boardOrder) {
+        moveBoard(item.boardOrder, boardOrder);
+        item.boardOrder = boardOrder;
+      }
+    },
+    drop: saveBoardOrder,
+  });
+
+  drag(drop(ref));
+
   return (
-    <div className="board-column">
+    <div
+      ref={ref}
+      className="board-column"
+      style={{
+        backgroundColor: '#f1f1f1',
+        opacity: isDragging ? 1 : 1, // 드래그 중에도 투명도 유지
+      }}
+    >
       <div className="board-header">
         {isEditing ? (
           <>

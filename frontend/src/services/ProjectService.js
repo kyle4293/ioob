@@ -11,8 +11,13 @@ export const projectService = {
     return response.data;
   },
 
-  getProjectDetails: async (id) => {
-    const response = await apiClient.get(`/api/projects/${id}`);
+  getProjectDetails: async (projectId) => {
+    const response = await apiClient.get(`/api/projects/${projectId}`);
+    return response.data;
+  },
+
+  updateProject: async (projectId, projectData) => {
+    const response = await apiClient.put(`/api/projects/${projectId}`, projectData);
     return response.data;
   },
 

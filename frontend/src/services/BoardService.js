@@ -16,6 +16,10 @@ export const boardService = {
     return response.data;
   },
 
+  updateBoardOrder: async (projectId, boards) => {
+    await apiClient.put(`/api/projects/${projectId}/boards/order`, boards);
+  },  
+
   deleteBoard: async (projectId, boardId) => {
     await apiClient.delete(`/api/projects/${projectId}/boards/${boardId}`);
   },

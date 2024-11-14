@@ -43,20 +43,20 @@ public class ProjectService {
                 .build();
         userProjectRoleRepository.save(userProjectRole);
 
-        return new ProjectResponseDto(project);
+        return ProjectResponseDto.of(project);
     }
 
     @Transactional(readOnly = true)
     public List<ProjectResponseDto> getAllProjects() {
         return projectRepository.findAll().stream()
-                .map(ProjectResponseDto::new)
+                .map(ProjectResponseDto::of)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public ProjectResponseDto getProjectById(User user, Long projectId) {
         Project project = findProjectById(projectId);
-        return new ProjectResponseDto(project);
+        return ProjectResponseDto.of(project);
     }
 
     @Transactional(readOnly = true)
@@ -74,7 +74,7 @@ public class ProjectService {
 
         project.setName(projectRequestDto.getName());
         project.setDescription(projectRequestDto.getDescription());
-        return new ProjectResponseDto(project);
+        return ProjectResponseDto.of(project);
     }
 
     @Transactional

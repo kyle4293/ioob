@@ -46,6 +46,14 @@ public class ProjectController {
         return projectService.getUsersByProjectId(userDetails.getUser(), projectId);
     }
 
+    @Operation(summary = "프로젝트 수정", description = "ID를 통해 특정 프로젝트를 삭제하는 API")
+    @PutMapping("/{projectId}")
+    public ProjectResponseDto updateProject(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                              @PathVariable Long projectId,
+                              @RequestBody ProjectRequestDto projectRequestDto) {
+        return projectService.updateProject(userDetails.getUser(), projectId, projectRequestDto);
+    }
+
     @Operation(summary = "프로젝트 삭제", description = "ID를 통해 특정 프로젝트를 삭제하는 API")
     @DeleteMapping("/{projectId}")
     public void deleteProject(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long projectId) {

@@ -82,7 +82,9 @@ public class TaskService {
 
     private UserProjectRole checkAssignedTo(Long projectId, TaskRequestDto taskRequestDto) {
         UserProjectRole projectRole = null;
-        if (taskRequestDto.getAssignedToEmail() != null) {
+        String assignedToEmail = taskRequestDto.getAssignedToEmail();
+
+        if (assignedToEmail != null && !assignedToEmail.trim().isEmpty()) {
             projectRole = userProjectRoleRepository.findByUserEmailAndProjectId(taskRequestDto.getAssignedToEmail(), projectId)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_IN_PROJECT));
         }
@@ -107,13 +109,13 @@ public class TaskService {
                 .user(user)
                 .build();
 
-        return CommentResponseDto.from(commentRepository.save(comment));
+        return CommentResponseDto.of(commentRepository.save(comment));
     }
 
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getCommentsByTaskId(Long taskId) {
         return commentRepository.findByTaskId(taskId).stream()
-                .map(CommentResponseDto::from)
+                .map(CommentResponseDto::of)
                 .collect(Collectors.toList());
     }
 
@@ -123,7 +125,7 @@ public class TaskService {
         checkCommentPermission(user, comment);
 
         comment.setContent(dto.getContent());
-        return CommentResponseDto.from(comment);
+        return CommentResponseDto.of(comment);
     }
 
     @Transactional

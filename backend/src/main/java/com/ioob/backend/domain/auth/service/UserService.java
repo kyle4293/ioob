@@ -62,7 +62,7 @@ public class UserService {
     public List<ProjectResponseDto> getUserProjects(Long userId) {
         List<UserProjectRole> userProjectRoles = userProjectRoleRepository.findByUserId(userId);
         return userProjectRoles.stream()
-                .map(userProjectRole -> new ProjectResponseDto(userProjectRole.getProject()))
+                .map(userProjectRole -> ProjectResponseDto.of(userProjectRole.getProject()))
                 .collect(Collectors.toList());
     }
 

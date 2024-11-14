@@ -1,5 +1,6 @@
 package com.ioob.backend.domain.kanban.controller;
 
+import com.ioob.backend.domain.kanban.dto.BoardOrderDto;
 import com.ioob.backend.domain.kanban.dto.BoardRequestDto;
 import com.ioob.backend.domain.kanban.dto.BoardResponseDto;
 import com.ioob.backend.domain.kanban.service.BoardService;
@@ -18,22 +19,28 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @Operation(summary = "보드 목록 조회", description = "프로젝트 내 모든 보드를 조회하는 API")
-    @GetMapping
-    public List<BoardResponseDto> getAllBoards(@PathVariable Long projectId) {
-        return boardService.getAllBoards(projectId);
-    }
-
     @Operation(summary = "보드 생성", description = "새로운 보드를 생성하는 API")
     @PostMapping
     public BoardResponseDto createBoard(@RequestBody BoardRequestDto boardRequestDto) {
         return boardService.createBoard(boardRequestDto);
     }
 
+    @Operation(summary = "보드 목록 조회", description = "프로젝트 내 모든 보드를 조회하는 API")
+    @GetMapping
+    public List<BoardResponseDto> getAllBoards(@PathVariable Long projectId) {
+        return boardService.getAllBoards(projectId);
+    }
+
     @Operation(summary = "보드 수정", description = "ID를 통해 특정 보드를 수정하는 API")
     @PutMapping("/{boardId}")
     public BoardResponseDto updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto boardRequestDto) {
         return boardService.updateBoard(boardId, boardRequestDto);
+    }
+
+    @Operation(summary = "보드 순서 변경", description = "보드 순서를 일괄적으로 변경하는 API")
+    @PutMapping("/order")
+    public void updateBoardOrder(@RequestBody List<BoardOrderDto> boardOrders) {
+        boardService.updateBoardOrder(boardOrders);
     }
 
     @Operation(summary = "보드 삭제", description = "ID를 통해 특정 보드를 삭제하는 API")

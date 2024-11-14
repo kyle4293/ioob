@@ -302,9 +302,16 @@ html, body {
 }
 
 .task-project-name {
-  font-size: 12px;
-  color: #666;
-  margin-top: 4px;
+  font-size: 14px;
+  color: #888;
+  margin-top: 0;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.task-project-name:hover {
+  color: #3f3f3f;
+  font-weight: bold;
 }
 
 .home-task-status {
@@ -416,7 +423,8 @@ html, body {
   height: calc(100vh - 150px); 
 }
 
-.project-details-header {
+.project-details-header,
+.task-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -430,7 +438,8 @@ html, body {
   margin-bottom: 10px;
 }
 
-.project-dropdown-button {
+.project-dropdown-button,
+.task-dropdown-button {
   color: black;
   background-color: white;
   border: none;
@@ -439,13 +448,15 @@ html, body {
   margin-left: 8px;
 }
 
-.project-dropdown-button:hover {
+.project-dropdown-button:hover,
+.task-dropdown-button:hover {
   background-color: #f4f4f4
 }
 
-.project-dropdown-menu {
+.project-dropdown-menu,
+.task-dropdown-menu {
   position: absolute;
-  top: 65px;
+  top: 50px;
   right: 0;
   background-color: white;
   color: #333;
@@ -457,7 +468,8 @@ html, body {
   z-index: 100;
 }
 
-.project-dropdown-menu button {
+.project-dropdown-menu button,
+.task-dropdown-menu button {
   padding: 10px 15px;
   text-align: left;
   background: none;
@@ -467,8 +479,9 @@ html, body {
   color: #333;
 }
 
-.project-dropdown-menu button:hover {
-  background-color: #f0f0f0;
+.project-dropdown-menu button:hover,
+.task-dropdown-menu button:hover {
+  font-weight: 700;
 }
 
 .board-column {
@@ -584,20 +597,9 @@ html, body {
   margin-bottom: 5px;
 }
 
-.task-project-name {
-  font-size: 14px;
-  color: #888;
-  margin-top: 0;
-  margin-bottom: 5px;
-}
-
 .task-dates {
   font-size: 12px;
   color: #aaa;
-}
-
-.task-actions button {
-  margin-left: 10px;
 }
 
 .task-content {
@@ -751,19 +753,44 @@ html, body {
 .modal-content {
   color: black;
   background-color: #fff;
-  padding: 20px;
+  padding: 30px;
   border-radius: 8px;
-  max-width: 80%;
+  max-width: 500px;
+  width: 90%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
 }
 
 .modal-content h3 {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.modal-row {
+  display: flex;
+  align-items: center;
   margin-bottom: 15px;
 }
 
-.modal-content button:hover {
-  background-color: #545454;
+.modal-label {
+  width: 80px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.modal-input {
+  flex: 1;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.modal-actions button{
+  margin: 5px;
 }
 
 .user {
