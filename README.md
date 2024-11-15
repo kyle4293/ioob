@@ -15,6 +15,8 @@ IOOB는 팀 단위의 프로젝트 및 작업 관리 도구로, 프로젝트, �
 
 [칸반보드](https://zircon-flier-138.notion.site/604fa662819245dca51f4cc624a15100)
 
+[Spring Security, JWT 기반 인증/인가 프로세스](https://zircon-flier-138.notion.site/Spring-Security-JWT-13c3b5b1b68980ffb686c5f22018b420)
+
 [Email 인증 프로세스](https://zircon-flier-138.notion.site/Email-dcba921aeeac40139b96842aada50a09)
 
 [예외 처리](https://zircon-flier-138.notion.site/f2f7ea1f6f7949b596d8df3956a7feb2)
