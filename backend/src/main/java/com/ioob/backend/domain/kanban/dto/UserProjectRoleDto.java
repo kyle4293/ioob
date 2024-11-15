@@ -8,13 +8,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserProjectRoleDto {
-    private String userName;
-    private String userEmail;
+    private String name;
+    private String email;
     private Role role;
 
     private UserProjectRoleDto(UserProjectRole userProjectRole) {
-        this.userName = userProjectRole.getUser().getName();
-        this.userEmail = userProjectRole.getUser().getEmail();
+        this.name = userProjectRole.getUser().getName();
+        this.email = userProjectRole.getUser().getEmail();
         this.role = userProjectRole.getRole();
     }
 

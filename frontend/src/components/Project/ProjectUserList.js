@@ -23,8 +23,8 @@ const ProjectUserList = ({ projectId, onClose }) => {
         <h3>프로젝트 사용자 목록</h3>
         <ul>
           {users.map(user => (
-            <li className='user' key={user.userEmail}>
-              <p>{user.userName} ({user.userEmail})</p> 
+            <li className='user' key={user.email}>
+              <p>{user.name} ({user.email})</p> 
               <p>{user.role === 'ROLE_PROJECT_ADMIN' ? 'Admin' : 'User'}</p>
             </li>
           ))}

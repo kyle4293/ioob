@@ -1,6 +1,6 @@
 package com.ioob.backend.domain.auth.controller;
 
-import com.ioob.backend.domain.auth.dto.UserProfileResponseDto;
+import com.ioob.backend.domain.auth.dto.UserResponseDto;
 import com.ioob.backend.domain.auth.service.UserService;
 import com.ioob.backend.domain.kanban.dto.ProjectResponseDto;
 import com.ioob.backend.domain.kanban.dto.TaskResponseDto;
@@ -27,7 +27,7 @@ public class UserController {
     @Operation(
             summary = "프로필 조회", description = "현재 로그인한 사용자의 프로필을 조회하는 API")
     @GetMapping("/profile")
-    public UserProfileResponseDto getUserProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public UserResponseDto getUserProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.getUserProfile(userDetails.getUser());
     }
 

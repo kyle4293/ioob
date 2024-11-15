@@ -2,17 +2,24 @@ package com.ioob.backend.domain.auth.dto;
 
 import com.ioob.backend.domain.auth.entity.User;
 import com.ioob.backend.domain.kanban.entity.Role;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
-public class UserInfoDto {
+@Setter
+public class UserResponseDto {
     private Long id;
     private String name;
     private String email;
     private Role role;
     private boolean enabled;
 
-    private UserInfoDto(User user) {
+    private UserResponseDto(User user) {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
@@ -20,7 +27,7 @@ public class UserInfoDto {
         this.enabled = user.isEnabled();
     }
 
-    public static UserInfoDto from(User user) {
-        return new UserInfoDto(user);
+    public static UserResponseDto from(User user) {
+        return new UserResponseDto(user);
     }
 }

@@ -34,8 +34,8 @@ const TaskDetails = () => {
           setUpdatedTitle(taskData.title);
           setUpdatedDescription(taskData.description);
           setUpdatedStatus(taskData.status);
-          setAssignedToEmail(taskData.assignedToEmail || '');
-          setUpdatedBoardId(taskData.boardId);
+          setAssignedToEmail(taskData.assignedTo.email);
+          setUpdatedBoardId(taskData.board.id);
         } catch (error) {
           console.error('테스크 정보를 불러오는 중 오류 발생:', error);
         }
@@ -45,9 +45,11 @@ const TaskDetails = () => {
       setUpdatedTitle(task.title);
       setUpdatedDescription(task.description);
       setUpdatedStatus(task.status);
-      setAssignedToEmail(task.assignedToEmail || '');
-      setUpdatedBoardId(task.boardId);
+      setAssignedToEmail(task.assignedTo.email || '');
+      setUpdatedBoardId(task.board.id);
     }
+    console.log(task);
+
   }, [task, projectId, boardId, taskId]);
 
   useEffect(() => {
@@ -70,7 +72,7 @@ const TaskDetails = () => {
         title: updatedTitle,
         description: updatedDescription,
         status: updatedStatus,
-        assignedToEmail,
+        assignedToEmail: assignedToEmail,
         boardId: updatedBoardId,
       };
       const response = await taskService.updateTask(projectId, boardId, taskId, updatedTask);
@@ -130,11 +132,9 @@ const TaskDetails = () => {
   return (
     <div className="task-details">
       <p className="task-project-name">
-        <span onClick={() => navigate(`/projects/${task.projectId}`)}>
-          {task.projectName}
+        <span onClick={() => navigate(`/projects/${projectId}`)}>
+          {task.project.name} / {task.board.name}
         </span>
-        {' / '}
-        {task.boardName}
       </p>
       <div className="task-header">
         <div className="task-project-info">
@@ -165,9 +165,9 @@ const TaskDetails = () => {
           <h3>상태</h3>
           <p>{task.status}</p>
           <h3>담당자</h3>
-          <p>{task.assignedToName || 'Unassigned'}</p>
+          <p>{task.assignedTo ? task.assignedTo.name : 'Unassigned'}</p>
           <h3>생성자</h3>
-          <p>{task.createdByName}</p>
+          <p>{task.createdBy.name}</p>
         </div>
       </div>
 
@@ -216,12 +216,12 @@ const TaskDetails = () => {
               <label className="modal-label">담당자</label>
               <select
                 className="modal-input"
-                value={assignedToEmail}
+                value={assignedToEmail} 
                 onChange={(e) => setAssignedToEmail(e.target.value)}
-              >
+              > <option value="">Unassigned</option>
                 {users.map((user) => (
-                  <option key={user.userEmail} value={user.userEmail}>
-                    {user.userName} ({user.userEmail})
+                  <option key={user.email} value={user.email}>
+                    {user.name} ({user.email})
                   </option>
                 ))}
               </select>

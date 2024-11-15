@@ -1,5 +1,6 @@
 package com.ioob.backend.domain.kanban.dto;
 
+import com.ioob.backend.domain.auth.dto.UserResponseDto;
 import com.ioob.backend.domain.kanban.entity.Status;
 import com.ioob.backend.domain.kanban.entity.Task;
 import lombok.AllArgsConstructor;
@@ -21,12 +22,10 @@ public class TaskResponseDto {
     private String title;
     private String description;
     private Status status;
-    private Long projectId;
-    private String projectName;
-    private Long boardId;
-    private String boardName;
-    private String createdByName;
-    private String assignedToName;
+    private ProjectResponseDto project;
+    private BoardResponseDto board;
+    private UserResponseDto createdBy;
+    private UserResponseDto assignedTo;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -35,12 +34,10 @@ public class TaskResponseDto {
         this.title = task.getTitle();
         this.description = task.getDescription();
         this.status = task.getStatus();
-        this.projectName = task.getBoard().getProject().getName();
-        this.projectId = task.getBoard().getProject().getId();
-        this.boardName = task.getBoard().getName();
-        this.boardId = task.getBoard().getId();
-        this.createdByName = task.getCreatedBy().getName();
-        this.assignedToName = task.getAssignedTo() != null ? task.getAssignedTo().getName() : null;
+        this.project = ProjectResponseDto.of(task.getBoard().getProject());
+        this.board = BoardResponseDto.of(task.getBoard());
+        this.createdBy = UserResponseDto.from(task.getCreatedBy());
+        this.assignedTo = task.getAssignedTo() != null ? UserResponseDto.from(task.getAssignedTo()) : null;
         this.createdAt = task.getCreatedAt();
         this.modifiedAt = task.getModifiedAt();
     }

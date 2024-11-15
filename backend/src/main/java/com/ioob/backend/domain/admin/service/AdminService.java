@@ -1,6 +1,6 @@
 package com.ioob.backend.domain.admin.service;
 
-import com.ioob.backend.domain.auth.dto.UserInfoDto;
+import com.ioob.backend.domain.auth.dto.UserResponseDto;
 import com.ioob.backend.domain.auth.entity.User;
 import com.ioob.backend.domain.auth.repository.UserRepository;
 import com.ioob.backend.global.exception.CustomException;
@@ -21,11 +21,11 @@ public class AdminService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<UserInfoDto> getAllUsers() {
+    public List<UserResponseDto> getAllUsers() {
         try {
             List<User> users = userRepository.findAll();
             return users.stream()
-                    .map(UserInfoDto::from)
+                    .map(UserResponseDto::from)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -33,8 +33,8 @@ public class AdminService {
         }
     }
 
-    public UserInfoDto getUser(Long id) {
-        return UserInfoDto.from(userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
+    public UserResponseDto getUser(Long id) {
+        return UserResponseDto.from(userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
     }
 
     @Transactional

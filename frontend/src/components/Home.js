@@ -96,11 +96,11 @@ const Home = () => {
                   <div
                     key={task.id}
                     className="task-item"
-                    onClick={() => handleTaskClick(task.projectId, task.boardId, task.id)}
+                    onClick={() => handleTaskClick(task.project.id, task.board.id, task.id)}
                   >
                     <div>
                       <span className="task-title">{task.title}</span>
-                      <div className="task-project-name">{task.projectName}</div>
+                      <div className="task-project-name">{task.project.name}</div>
                     </div>
                     <span className="home-task-status">{task.status}</span>
                   </div>

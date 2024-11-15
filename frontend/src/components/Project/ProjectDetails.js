@@ -33,8 +33,12 @@ const ProjectDetails = () => {
         setUpdatedProjectName(projectData.name);
         setUpdatedProjectDescription(projectData.description);
       } catch (error) {
-        console.error('프로젝트 정보를 불러오는 중 오류:', error);
-        setError('프로젝트 정보를 불러오는 중 오류가 발생했습니다.');
+        if (error.response && error.response.status === 403) {
+          alert('접근 권한이 없습니다.');
+          navigate('/'); 
+        } else {
+          setError('프로젝트 정보를 불러오는 중 오류가 발생했습니다.');
+        }
       }
     };
 

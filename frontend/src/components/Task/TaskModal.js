@@ -66,8 +66,8 @@ const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
         >
           <option value="">담당자 선택</option>
           {users.map((user) => (
-            <option key={user.userEmail} value={user.userEmail}>
-              {user.userName} ({user.userEmail})
+            <option key={user.email} value={user.email}>
+              {user.name} ({user.email})
             </option>
           ))}
         </select>

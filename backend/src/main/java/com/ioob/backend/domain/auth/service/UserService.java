@@ -1,6 +1,6 @@
 package com.ioob.backend.domain.auth.service;
 
-import com.ioob.backend.domain.auth.dto.UserProfileResponseDto;
+import com.ioob.backend.domain.auth.dto.UserResponseDto;
 import com.ioob.backend.domain.auth.entity.User;
 import com.ioob.backend.domain.auth.entity.VerificationToken;
 import com.ioob.backend.domain.auth.repository.UserRepository;
@@ -54,8 +54,8 @@ public class UserService {
     }
     
     @Transactional(readOnly = true)
-    public UserProfileResponseDto getUserProfile(User user) {
-        return UserProfileResponseDto.from(user);
+    public UserResponseDto getUserProfile(User user) {
+        return UserResponseDto.from(user);
     }
 
     @Transactional(readOnly = true)
@@ -69,8 +69,6 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<TaskResponseDto> getUserTasks(Long userId) {
         List<Task> tasks = taskRepository.findByAssignedToId(userId);
-        return tasks.stream()
-                .map(TaskResponseDto::of)
-                .collect(Collectors.toList());
+        return TaskResponseDto.of(tasks);
     }
 }
