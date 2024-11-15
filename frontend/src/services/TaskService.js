@@ -6,6 +6,11 @@ export const taskService = {
     return response.data;
   },
 
+  getTasksByBoardId: async (projectId, boardId) => {
+    const response = await apiClient.get(`/api/projects/${projectId}/boards/${boardId}/tasks`);
+    return response.data;
+  },
+
   getTaskDetails: async (projectId, boardId, taskId) => {
     const response = await apiClient.get(`/api/projects/${projectId}/boards/${boardId}/tasks/${taskId}`);
     return response.data;
@@ -13,6 +18,11 @@ export const taskService = {
 
   updateTask: async (projectId, boardId, taskId, updatedTask) => {
     const response = await apiClient.put(`/api/projects/${projectId}/boards/${boardId}/tasks/${taskId}`, updatedTask);
+    return response.data;
+  },
+
+  moveTaskToBoard: async (projectId, boardId, taskId) => {
+    const response = await apiClient.put(`/api/projects/${projectId}/boards/${boardId}/tasks/${taskId}/move`);
     return response.data;
   },
 

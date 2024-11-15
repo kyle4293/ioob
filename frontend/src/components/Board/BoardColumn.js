@@ -1,20 +1,33 @@
-// BoardColumn.js
 import React, { useState, useRef, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import TaskList from '../Task/TaskList';
 import TaskModal from '../Task/TaskModal';
 import { boardService } from '../../services/BoardService';
+import { taskService } from '../../services/TaskService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 
-const BoardColumn = ({ projectId, board, boardOrder, moveBoard, onBoardUpdated, onBoardDeleted, saveBoardOrder }) => {
-  const [tasks, setTasks] = useState(board.tasks || []);
+const BoardColumn = ({ projectId, board, boardOrder, moveBoard, saveBoardOrder, onBoardUpdate }) => {
+  const [tasks, setTasks] = useState([]);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedBoardName, setEditedBoardName] = useState(board.name);
 
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const taskData = await taskService.getTasksByBoardId(projectId, board.id);
+        setTasks(taskData);
+      } catch (error) {
+        console.error('테스크 목록을 불러오는 중 오류:', error);
+      }
+    };
+
+    fetchTasks();
+  }, [projectId, board.id]);
 
   const handleOpenTaskModal = () => {
     setIsTaskModalOpen(true);
@@ -28,14 +41,15 @@ const BoardColumn = ({ projectId, board, boardOrder, moveBoard, onBoardUpdated, 
   const handleTaskCreated = (newTask) => {
     setTasks((prevTasks) => [...prevTasks, newTask]);
     handleCloseTaskModal();
+    onBoardUpdate();
   };
 
   const handleEditBoard = async () => {
     try {
-      const updatedBoard = await boardService.editBoard(projectId, board.id, { name: editedBoardName });
-      onBoardUpdated(updatedBoard);
+      await boardService.editBoard(projectId, board.id, { name: editedBoardName });
       setIsEditing(false);
       setIsDropdownOpen(false);
+      onBoardUpdate();
     } catch (error) {
       console.error('보드 수정 중 오류 발생:', error);
     }
@@ -45,8 +59,8 @@ const BoardColumn = ({ projectId, board, boardOrder, moveBoard, onBoardUpdated, 
     if (window.confirm('정말 이 보드를 삭제하시겠습니까?')) {
       try {
         await boardService.deleteBoard(projectId, board.id);
-        onBoardDeleted(board.id);
         setIsDropdownOpen(false);
+        onBoardUpdate();
       } catch (error) {
         console.error('보드 삭제 중 오류 발생:', error);
       }
@@ -73,13 +87,13 @@ const BoardColumn = ({ projectId, board, boardOrder, moveBoard, onBoardUpdated, 
 
   const [{ isDragging }, drag] = useDrag({
     type: 'BOARD',
-    item: { boardOrder },
+    item: { boardOrder, boardId: board.id },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
 
-  const [, drop] = useDrop({
+  const [, dropBoard] = useDrop({
     accept: 'BOARD',
     hover(item) {
       if (item.boardOrder !== boardOrder) {
@@ -90,16 +104,29 @@ const BoardColumn = ({ projectId, board, boardOrder, moveBoard, onBoardUpdated, 
     drop: saveBoardOrder,
   });
 
-  drag(drop(ref));
+  drag(dropBoard(ref));
+
+  const [, dropTask] = useDrop({
+    accept: 'TASK',
+    drop: async (item) => {
+      try {
+        const updatedTask = await taskService.moveTaskToBoard(projectId, board.id, item.task.id);
+        setTasks((prevTasks) => [...prevTasks.filter((task) => task.id !== item.task.id), updatedTask]);
+        onBoardUpdate();
+      } catch (error) {
+        console.error('테스크 이동 중 오류 발생:', error);
+      }
+    },
+  });
 
   return (
     <div
-      ref={ref}
-      className="board-column"
-      style={{
-        backgroundColor: '#f1f1f1',
-        opacity: isDragging ? 1 : 1, // 드래그 중에도 투명도 유지
+      ref={(el) => {
+        ref.current = el;
+        dropTask(el);
       }}
+      className="board-column"
+      style={{ backgroundColor: '#f1f1f1', opacity: isDragging ? 0.5 : 1 }}
     >
       <div className="board-header">
         {isEditing ? (

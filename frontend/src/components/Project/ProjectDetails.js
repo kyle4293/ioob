@@ -1,32 +1,27 @@
-// ProjectDetails.js
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { projectService } from '../../services/ProjectService';
-import { boardService } from '../../services/BoardService';
-import BoardColumn from '../Board/BoardColumn';
+import BoardList from '../Board/BoardList';
 import AddUserModal from './AddUserModal';
 import ProjectUserList from './ProjectUserList';
+import EditProjectModal from './EditProjectModal';
 import BoardModal from '../Board/BoardModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import dayjs from 'dayjs';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const ProjectDetails = () => {
   const { id: projectId } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState({});
-  const [boards, setBoards] = useState([]);
   const [updatedProjectName, setUpdatedProjectName] = useState(project.name || '');
   const [updatedProjectDescription, setUpdatedProjectDescription] = useState(project.description || '');
-
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false);
   const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false);
-
   const dropdownRef = useRef(null);
+  const onBoardUpdateRef = useRef(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [error, setError] = useState(null);
 
@@ -37,10 +32,6 @@ const ProjectDetails = () => {
         setProject(projectData);
         setUpdatedProjectName(projectData.name);
         setUpdatedProjectDescription(projectData.description);
-
-        const boardData = await boardService.getBoards(projectId);
-        boardData.sort((a, b) => a.boardOrder - b.boardOrder); // Sort boards by boardOrder
-        setBoards(boardData);
       } catch (error) {
         console.error('프로젝트 정보를 불러오는 중 오류:', error);
         setError('프로젝트 정보를 불러오는 중 오류가 발생했습니다.');
@@ -50,19 +41,10 @@ const ProjectDetails = () => {
     fetchProjectDetails();
   }, [projectId]);
 
-  const handleBoardCreated = (newBoard) => {
-    setBoards((prevBoards) => [...prevBoards, newBoard].sort((a, b) => a.boardOrder - b.boardOrder));
-  };
-
-  const handleBoardUpdated = (updatedBoard) => {
-    setBoards((prevBoards) =>
-      prevBoards.map((board) => (board.id === updatedBoard.id ? updatedBoard : board))
-        .sort((a, b) => a.boardOrder - b.boardOrder)
-    );
-  };
-
-  const handleBoardDeleted = (deletedBoardId) => {
-    setBoards((prevBoards) => prevBoards.filter((board) => board.id !== deletedBoardId));
+  const handleBoardCreated = () => {
+    if (onBoardUpdateRef.current) {
+      onBoardUpdateRef.current(); 
+    }
   };
 
   const handleProjectUpdate = async () => {
@@ -78,31 +60,6 @@ const ProjectDetails = () => {
     } catch (error) {
       console.error('프로젝트 업데이트 중 오류 발생:', error);
       alert('프로젝트 업데이트 권한이 없습니다.');
-    }
-  };
-
-  const moveBoard = (fromOrder, toOrder) => {
-    const updatedBoards = [...boards];
-    const movedBoard = updatedBoards.find(board => board.boardOrder === fromOrder);
-    if (movedBoard) {
-      updatedBoards.splice(updatedBoards.indexOf(movedBoard), 1);
-      updatedBoards.splice(toOrder - 1, 0, movedBoard);
-      updatedBoards.forEach((board, index) => (board.boardOrder = index + 1));
-      setBoards(updatedBoards);
-    }
-  };
-
-  const saveBoardOrder = async () => {
-    try {
-      await boardService.updateBoardOrder(
-        projectId,
-        boards.map((board, index) => ({
-          boardId: board.id,
-          newOrder: index + 1,
-        }))
-      );
-    } catch (error) {
-      console.error('보드 순서 업데이트 중 오류 발생:', error);
     }
   };
 
@@ -163,22 +120,7 @@ const ProjectDetails = () => {
         )}
       </div>
 
-      <DndProvider backend={HTML5Backend}>
-        <div className="kanban-container">
-          {boards.map((board) => (
-            <BoardColumn
-              key={board.id}
-              boardOrder={board.boardOrder}
-              board={board}
-              projectId={projectId}
-              moveBoard={moveBoard}
-              onBoardUpdated={handleBoardUpdated}
-              onBoardDeleted={handleBoardDeleted}
-              saveBoardOrder={saveBoardOrder}
-            />
-          ))}
-        </div>
-      </DndProvider>
+      <BoardList projectId={projectId} onBoardUpdateRef={onBoardUpdateRef} />
 
       {isUserModalOpen && (
         <ProjectUserList projectId={projectId} onClose={() => setIsUserModalOpen(false)} />
@@ -197,37 +139,17 @@ const ProjectDetails = () => {
       )}
 
       {isEditProjectModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>프로젝트 편집</h3>
-            <div className="modal-row">
-              <label className="modal-label">이름</label>
-              <input
-                type="text"
-                className="modal-input"
-                value={updatedProjectName}
-                onChange={(e) => setUpdatedProjectName(e.target.value)}
-              />
-            </div>
-            <div className="modal-row">
-              <label className="modal-label">설명</label>
-              <input
-                type="text"
-                className="modal-input"
-                value={updatedProjectDescription}
-                onChange={(e) => setUpdatedProjectDescription(e.target.value)}
-              />
-            </div>
-            <div className="modal-actions">
-              <button onClick={handleProjectUpdate}>저장</button>
-              <button onClick={() => setIsEditProjectModalOpen(false)}>취소</button>
-            </div>
-          </div>
-        </div>
+        <EditProjectModal
+          projectName={updatedProjectName}
+          projectDescription={updatedProjectDescription}
+          onClose={() => setIsEditProjectModalOpen(false)}
+          onSave={handleProjectUpdate}
+          setProjectName={setUpdatedProjectName}
+          setProjectDescription={setUpdatedProjectDescription}
+        />
       )}
     </div>
   );
 };
 
-export default ProjectDetails; 
-
+export default ProjectDetails;

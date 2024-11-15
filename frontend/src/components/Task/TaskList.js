@@ -1,24 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import TaskCard from './TaskCard';
 
-const TaskList = ({ tasks }) => {
+const TaskList = ({ tasks, onTaskMove }) => {
   const navigate = useNavigate();
+  const [taskList, setTaskList] = useState(tasks);
+
+  useEffect(() => {
+    setTaskList(tasks);
+  }, [tasks]);
 
   const handleTaskClick = (task) => {
     navigate(`/projects/${task.projectId}/boards/${task.boardId}/tasks/${task.id}`, { state: { task } });
   };  
 
+  const handleTaskMove = (taskId) => {
+    setTaskList((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    if (onTaskMove) onTaskMove(taskId); 
+  };
+
   return (
     <div className="task-list">
-      {tasks.length > 0 ? (
-        tasks.map((task) => (
-          <div key={task.id} className="task-card" onClick={() => handleTaskClick(task)}>
-            <div className="task-title">{task.title}</div>
-            <div className="task-info">
-              <div className="task-status">{task.status}</div>
-              <div className="task-user">{task.assignedToName || 'Unassigned'}</div>
-            </div>
-          </div>
+      {taskList.length > 0 ? (
+        taskList.map((task) => (
+          <TaskCard key={task.id} task={task} onMove={handleTaskMove} onClick={() => handleTaskClick(task)}/>
         ))
       ) : (
         <p>테스크가 없습니다.</p>

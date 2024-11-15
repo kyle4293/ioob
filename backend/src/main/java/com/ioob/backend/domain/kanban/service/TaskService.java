@@ -80,6 +80,14 @@ public class TaskService {
         return TaskResponseDto.of(taskRepository.save(updatedTask));
     }
 
+    @Transactional
+    public TaskResponseDto moveTaskToBoard(Long taskId, Long newBoardId) {
+        Task task = findTaskById(taskId);
+        Board newBoard = findBoardById(newBoardId);
+        task.setBoard(newBoard);
+        return TaskResponseDto.of(taskRepository.save(task));
+    }
+
     private UserProjectRole checkAssignedTo(Long projectId, TaskRequestDto taskRequestDto) {
         UserProjectRole projectRole = null;
         String assignedToEmail = taskRequestDto.getAssignedToEmail();

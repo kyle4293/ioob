@@ -37,6 +37,12 @@ public class TaskController {
         return taskService.getTaskById(taskId);
     }
 
+    @Operation(summary = "보드 내 작업 조회", description = "보드 내 작업을 조회하는 API")
+    @GetMapping
+    public List<TaskResponseDto> getTasksByBoardId(@PathVariable  Long boardId) {
+        return taskService.getTasksByBoardId(boardId);
+    }
+
     @Operation(summary = "작업 수정", description = "ID를 통해 특정 작업을 수정하는 API(TODO, IN_PROGRESS, DONE)")
     @PutMapping("/{taskId}")
     public TaskResponseDto updateTask(@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -44,6 +50,13 @@ public class TaskController {
                                       @PathVariable  Long taskId,
                                       @RequestBody TaskRequestDto taskRequestDto) {
         return taskService.updateTask(userDetails.getUser(), projectId, taskId, taskRequestDto);
+    }
+
+    @Operation(summary = "작업 수정", description = "ID를 통해 특정 작업을 수정하는 API(TODO, IN_PROGRESS, DONE)")
+    @PutMapping("/{taskId}/move")
+    public TaskResponseDto moveTaskToBoard(@PathVariable  Long taskId,
+                                           @PathVariable  Long boardId) {
+        return taskService.moveTaskToBoard(taskId, boardId);
     }
 
     @Operation(summary = "작업 삭제", description = "ID를 통해 특정 작업을 삭제하는 API")
