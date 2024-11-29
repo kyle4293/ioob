@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,4 +24,7 @@ public class TaskRequestDto {
     private Long boardId;
     @Schema(description = "작업 담당자 이메일", example = "user@example.com")
     private String assignedToEmail;
+    @Schema(description = "업로드된 파일 목록")
+    private List<MultipartFile> files;
+
 }

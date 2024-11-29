@@ -6,16 +6,15 @@ import com.ioob.backend.domain.kanban.dto.CommentResponseDto;
 import com.ioob.backend.domain.kanban.dto.TaskRequestDto;
 import com.ioob.backend.domain.kanban.dto.TaskResponseDto;
 import com.ioob.backend.domain.kanban.entity.*;
-import com.ioob.backend.domain.kanban.repository.BoardRepository;
-import com.ioob.backend.domain.kanban.repository.CommentRepository;
-import com.ioob.backend.domain.kanban.repository.TaskRepository;
-import com.ioob.backend.domain.kanban.repository.UserProjectRoleRepository;
+import com.ioob.backend.domain.kanban.repository.*;
 import com.ioob.backend.global.exception.CustomException;
 import com.ioob.backend.global.exception.ErrorCode;
+import com.ioob.backend.global.service.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +28,8 @@ public class TaskService {
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
     private final UserProjectRoleRepository userProjectRoleRepository;
+    private final FileStorageService fileStorageService;
+    private final TaskFileRepository taskFileRepository;
 
     @Transactional
     public TaskResponseDto createTask(User user, Long projectId, Long boardId, TaskRequestDto taskRequestDto) {
@@ -42,6 +43,18 @@ public class TaskService {
                 .assignedTo(projectRole != null ? projectRole.getUser() : null)
                 .board(findBoardById(boardId))
                 .build();
+
+        if (taskRequestDto.getFiles() != null) {
+            for (MultipartFile file : taskRequestDto.getFiles()) {
+                String fileUrl = fileStorageService.saveFile(file);
+                TaskFile taskFile = TaskFile.builder()
+                        .fileName(file.getOriginalFilename())
+                        .fileUrl(fileUrl)
+                        .task(task)
+                        .build();
+                taskFileRepository.save(taskFile);
+            }
+        }
 
         return TaskResponseDto.of(taskRepository.save(task));
     }
@@ -150,8 +163,8 @@ public class TaskService {
     }
 
     private Task findTaskById(Long taskId) {
-        return taskRepository.findById(taskId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+        return taskRepository.findByIdWithFiles(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
     }
 
     private Board findBoardById(Long boardId) {

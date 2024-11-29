@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { taskService } from '../../services/TaskService';
 import { projectService } from '../../services/ProjectService';
 import { boardService } from '../../services/BoardService';
@@ -10,10 +10,9 @@ import dayjs from 'dayjs';
 
 const TaskDetails = () => {
   const { projectId, boardId, taskId } = useParams();
-  const { state } = useLocation();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [task, setTask] = useState(state?.task || null);
+  const [task, setTask] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [updatedTitle, setUpdatedTitle] = useState('');
   const [updatedDescription, setUpdatedDescription] = useState('');
@@ -23,34 +22,29 @@ const TaskDetails = () => {
   const [users, setUsers] = useState([]);
   const [boards, setBoards] = useState([]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [selectedImage, setSelectedImage] = useState(null); 
+
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    if (!task) {
-      const fetchTaskDetails = async () => {
-        try {
-          const taskData = await taskService.getTaskDetails(projectId, boardId, taskId);
-          setTask(taskData);
-          setUpdatedTitle(taskData.title);
-          setUpdatedDescription(taskData.description);
-          setUpdatedStatus(taskData.status);
-          setAssignedToEmail(taskData.assignedTo.email);
-          setUpdatedBoardId(taskData.board.id);
-        } catch (error) {
-          console.error('테스크 정보를 불러오는 중 오류 발생:', error);
-        }
-      };
-      fetchTaskDetails();
-    } else {
-      setUpdatedTitle(task.title);
-      setUpdatedDescription(task.description);
-      setUpdatedStatus(task.status);
-      setAssignedToEmail(task.assignedTo.email || '');
-      setUpdatedBoardId(task.board.id);
-    }
-    console.log(task);
-
-  }, [task, projectId, boardId, taskId]);
+    const fetchTaskDetails = async () => {
+      try {
+        const taskData = await taskService.getTaskDetails(projectId, boardId, taskId);
+        setTask(taskData);
+        console.log(taskData);
+        setUpdatedTitle(taskData.title);
+        setUpdatedDescription(taskData.description);
+        setUpdatedStatus(taskData.status);
+        setAssignedToEmail(taskData.assignedTo.email);
+        setUpdatedBoardId(taskData.board.id);
+      } catch (error) {
+        console.error('테스크 정보를 불러오는 중 오류 발생:', error);
+      }
+    };
+    fetchTaskDetails();
+    
+  }, [projectId, boardId, taskId]);
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -98,6 +92,23 @@ const TaskDetails = () => {
     }
   };
 
+  const handleFileDownload = async (fileId, fileName) => {
+    try {
+      const fileData = await taskService.downloadFile(fileId);
+  
+      const url = window.URL.createObjectURL(new Blob([fileData]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName); 
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('파일 다운로드 중 오류 발생:', error);
+      alert('파일 다운로드에 실패했습니다.');
+    }
+  };
+  
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
@@ -120,6 +131,16 @@ const TaskDetails = () => {
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
+  };
+
+  const openImageModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
   };
 
   if (!task) {
@@ -160,7 +181,40 @@ const TaskDetails = () => {
         <div className="task-description">
           <h3>설명</h3>
           <p>{task.description}</p>
+
+          {task.files &&
+            task.files
+              .filter((file) => file.fileType.startsWith('image/'))
+              .map((file) => (
+                <img
+                  key={file.id}
+                  src={file.previewUrl}
+                  alt={file.fileName}
+                  onClick={() => openImageModal(file.previewUrl)}
+                />
+              ))}
+
+          {task.files && task.files.some((file) => !file.fileType.startsWith('image/')) && (
+            <div className='task-files'>
+              <h4>첨부 파일</h4>
+              <ul>
+                {task.files
+                  .filter((file) => !file.fileType.startsWith('image/'))
+                  .map((file) => (
+                    <li key={file.id}>
+                      <button
+                        className="file-download-button"
+                        onClick={() => handleFileDownload(file.id, file.fileName)}
+                      >
+                        {file.fileName}
+                      </button>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          )}
         </div>
+
         <div className="task-information">
           <h3>상태</h3>
           <p>{task.status}</p>
@@ -248,9 +302,15 @@ const TaskDetails = () => {
             </div>
           </div>
         </div>
-      
       )}
 
+      {isModalOpen && selectedImage && (
+        <div className="image-modal" onClick={closeImageModal}>
+          <div className="image-modal-content">
+            <img src={selectedImage} alt="확대 이미지" style={{ maxWidth: '90%', maxHeight: '90%' }} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

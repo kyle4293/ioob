@@ -685,6 +685,48 @@ html, body {
   width: 100%;
 }
 
+.task-description img {
+  max-width: 400px;
+  display: block;
+  margin: 10px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.task-description .task-files {
+  margin-top: 20px;
+}
+
+.task-description .task-files h4 {
+  font-size: 1.1rem;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.task-description .task-files ul {
+  list-style: none;
+  padding: 0;
+}
+
+.task-description .task-files li {
+  margin-bottom: 5px;
+}
+
+.file-download-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+}
+
+.file-download-button:hover {
+  background: none;
+  text-decoration: underline;
+}
+
 .task-information {
   border-left: 1px solid #ccc;
   padding-left: 20px;
@@ -873,6 +915,37 @@ html, body {
   margin: 5px;
 }
 
+.file-upload {
+  margin-top: 10px;
+}
+
+.file-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.file-preview img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.file-name {
+  display: block;
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  font-size: 14px;
+}
+
+
+/* 사용자 목록 */
 .user-info {
   display: flex;
   justify-content: space-between;
@@ -911,4 +984,48 @@ html, body {
 .role-actions button:disabled {
   color: #ccc;
   cursor: not-allowed;
+}
+
+/* 이미지 모달 */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.image-modal-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-modal img {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.image-modal:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 30px;
+  font-size: 20px;
+  cursor: pointer;
 }

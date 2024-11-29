@@ -28,6 +28,8 @@ public class TaskResponseDto {
     private UserResponseDto assignedTo;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private List<TaskFileResponseDto> files;
+
 
     private TaskResponseDto(Task task) {
         this.id = task.getId();
@@ -40,6 +42,7 @@ public class TaskResponseDto {
         this.assignedTo = task.getAssignedTo() != null ? UserResponseDto.from(task.getAssignedTo()) : null;
         this.createdAt = task.getCreatedAt();
         this.modifiedAt = task.getModifiedAt();
+        this.files = TaskFileResponseDto.of(task.getFiles());
     }
 
     public static TaskResponseDto of(Task task) {

@@ -9,6 +9,7 @@ import com.ioob.backend.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,11 +24,11 @@ public class TaskController {
     private final TaskService taskService;
 
     @Operation(summary = "작업 생성", description = "새로운 작업을 생성하는 API(TODO, IN_PROGRESS, DONE)")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public TaskResponseDto createTask(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                      @PathVariable  Long projectId,
-                                      @PathVariable  Long boardId,
-                                      @RequestBody TaskRequestDto taskRequestDto) {
+                                      @PathVariable Long projectId,
+                                      @PathVariable Long boardId,
+                                      @ModelAttribute TaskRequestDto taskRequestDto) {
         return taskService.createTask(userDetails.getUser(), projectId, boardId, taskRequestDto);
     }
 

@@ -5,9 +5,11 @@ import { taskService } from '../../services/TaskService';
 const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [status, setStatus] = useState('TODO'); 
-  const [assignedToEmail, setAssignedToEmail] = useState(''); 
-  const [users, setUsers] = useState([]); 
+  const [status, setStatus] = useState('TODO');
+  const [assignedToEmail, setAssignedToEmail] = useState('');
+  const [users, setUsers] = useState([]);
+  const [files, setFiles] = useState([]); // 파일 상태
+  const [previewUrls, setPreviewUrls] = useState([]); // 이미지 미리보기 URL 상태
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -22,22 +24,32 @@ const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
     fetchUsers();
   }, [projectId]);
 
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFiles(selectedFiles);
+
+    const imageFiles = selectedFiles.filter((file) =>
+      file.type.startsWith('image/')
+    );
+    setPreviewUrls(imageFiles.map((file) => URL.createObjectURL(file)));
+  };
+
   const handleCreateTask = async () => {
     try {
-      const taskRequest = {
-        title,
-        description,
-        status,
-        boardId, 
-        assignedToEmail,
-      };
-      const newTask = await taskService.createTask(projectId, boardId, taskRequest);
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('status', status);
+      formData.append('assignedToEmail', assignedToEmail);
+      files.forEach((file) => formData.append('files', file)); 
+  
+      const newTask = await taskService.createTask(projectId, boardId, formData); 
       onTaskCreated(newTask);
       onClose();
     } catch (error) {
       console.error('테스크 생성 중 오류 발생:', error);
     }
-  };
+  };  
 
   return (
     <div className="modal">
@@ -59,7 +71,7 @@ const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
           <option value="IN_PROGRESS">IN_PROGRESS</option>
           <option value="DONE">DONE</option>
         </select>
-        <br></br>
+        <br />
         <select
           value={assignedToEmail}
           onChange={(e) => setAssignedToEmail(e.target.value)}
@@ -71,6 +83,21 @@ const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
             </option>
           ))}
         </select>
+        <div className="file-upload">
+          <input type="file" multiple onChange={handleFileChange} />
+          <div className="file-preview">
+            {previewUrls.map((url, index) => (
+              <img key={index} src={url} alt={`preview-${index}`} />
+            ))}
+            {files
+              .filter((file) => !file.type.startsWith('image/'))
+              .map((file, index) => (
+                <div key={index} className="file-name">
+                  {file.name}
+                </div>
+              ))}
+          </div>
+        </div>
         <div className="modal-actions">
           <button onClick={handleCreateTask}>테스크 생성</button>
           <button onClick={onClose}>취소</button>

@@ -11,9 +11,9 @@ const TaskList = ({ tasks, onTaskMove }) => {
   }, [tasks]);
 
   const handleTaskClick = (task) => {
-    navigate(`/projects/${task.project.id}/boards/${task.board.id}/tasks/${task.id}`, { state: { task } });
-  };  
-
+    navigate(`/projects/${task.project.id}/boards/${task.board.id}/tasks/${task.id}`);
+  };
+  
   const handleTaskMove = (taskId) => {
     setTaskList((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
     if (onTaskMove) onTaskMove(taskId); 
