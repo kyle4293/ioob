@@ -34,6 +34,13 @@ logging:
   level:
     root: INFO
     org.springframework.web: DEBUG
+    com.ioob.backend: DEBUG
+  file:
+    name: logs/app.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
 
 jwt:
   secret:
