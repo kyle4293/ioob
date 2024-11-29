@@ -60,9 +60,17 @@ const Header = () => {
                 className="header-project-dropdown-menu"
                 ref={projectDropdownRef}
               >
-                <Link to="/projects">모든 프로젝트 보기</Link>
+                <Link 
+                  to="/projects" 
+                  onClick={() => setProjectDropdownOpen(false)}
+                >
+                  모든 프로젝트 보기
+                </Link>
                 <button
-                  onClick={() => setIsProjectModalOpen(true)}
+                  onClick={() => {
+                    setIsProjectModalOpen(true);
+                    setProjectDropdownOpen(false);
+                  }}
                 >
                   프로젝트 만들기
                 </button>
@@ -81,12 +89,27 @@ const Header = () => {
             프로필
           </button>
           {isProfileDropdownOpen && (
-            <div className="header-profile-dropdown-menu" ref={profileDropdownRef}>
+            <div
+              className="header-profile-dropdown-menu"
+              ref={profileDropdownRef}
+            >
               <div className="profile-info">
                 <small>{user.email}</small>
               </div>
-              <Link to="/profile">계정 관리</Link>
-              <button onClick={handleLogout}>로그아웃</button>
+              <Link 
+                to="/profile" 
+                onClick={() => setProfileDropdownOpen(false)}
+              >
+                계정 관리
+              </Link>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setProfileDropdownOpen(false);
+                }}
+              >
+                로그아웃
+              </button>
             </div>
           )}
         </div>

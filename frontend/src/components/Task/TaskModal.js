@@ -71,8 +71,10 @@ const TaskModal = ({ projectId, boardId, onClose, onTaskCreated }) => {
             </option>
           ))}
         </select>
-        <button onClick={handleCreateTask}>테스크 생성</button>
-        <button onClick={onClose}>취소</button>
+        <div className="modal-actions">
+          <button onClick={handleCreateTask}>테스크 생성</button>
+          <button onClick={onClose}>취소</button>
+        </div>
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ const ProjectModal = ({ onClose }) => {
   return (
     <div className="modal">
       <div className="modal-content">
-        <h2>새 프로젝트 생성</h2>
+        <h3>새 프로젝트 생성</h3>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -34,7 +34,7 @@ const ProjectModal = ({ onClose }) => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="프로젝트 설명"
           />
-          <div className="modal-buttons">
+          <div className="modal-actions">
             <button type="submit">생성</button>
             <button type="button" onClick={onClose}>취소</button>
           </div>

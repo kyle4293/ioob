@@ -30,8 +30,10 @@ const AddUserModal = ({ projectId, onClose }) => {
           <option value="ROLE_USER">일반 사용자</option>
           <option value="ROLE_PROJECT_ADMIN">프로젝트 관리자</option>
         </select>
-        <button onClick={handleAddUser}>추가</button>
-        <button onClick={onClose}>닫기</button>
+        <div className="modal-actions">
+          <button onClick={handleAddUser}>추가</button>
+          <button onClick={onClose}>닫기</button>
+        </div>
       </div>
     </div>
   );

@@ -28,8 +28,10 @@ const BoardModal = ({ projectId, onClose, onBoardCreated }) => {
           value={boardName}
           onChange={(e) => setBoardName(e.target.value)}
         />
-        <button onClick={handleCreateBoard}>보드 생성</button>
-        <button onClick={onClose}>취소</button>
+        <div className="modal-actions">
+          <button onClick={handleCreateBoard}>보드 생성</button>
+          <button onClick={onClose}>취소</button>
+        </div>
       </div>
     </div>
   );

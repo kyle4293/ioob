@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
+    GENERIC_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred."),
     EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "Email is already registered"),
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Email sending failed"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not found"),
