@@ -41,9 +41,10 @@ const ProjectDetails = () => {
         }
       }
     };
-
+  
     fetchProjectDetails();
-  }, [projectId]);
+  }, [projectId, navigate]);
+  
 
   const handleBoardCreated = () => {
     if (onBoardUpdateRef.current) {

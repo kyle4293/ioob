@@ -969,7 +969,7 @@ html, body {
 
 .role-actions {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .role-actions button {
